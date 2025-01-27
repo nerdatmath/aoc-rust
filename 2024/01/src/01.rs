@@ -22,8 +22,8 @@ fn part_2(input: aoc::Input) -> impl ToString {
     let mut left: HashMap<u32, u32> = HashMap::new();
     let mut right: HashMap<u32, u32> = HashMap::new();
     for (l, r) in parse(input) {
-        left.entry(l).and_modify(|n| *n += 1).or_insert(1);
-        right.entry(r).and_modify(|n| *n += 1).or_insert(1);
+        *left.entry(l).or_default() += 1;
+        *right.entry(r).or_default() += 1;
     }
     let mut sum = 0;
     for (k, n) in left {
