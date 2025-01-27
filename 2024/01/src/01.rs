@@ -1,7 +1,8 @@
 aoc::parts!(1, 2);
 
-use std::collections::HashMap;
+pub mod bag;
 
+use bag::Bag;
 use aoc::Parse;
 
 fn part_1(input: aoc::Input) -> impl ToString {
@@ -19,15 +20,14 @@ fn part_1(input: aoc::Input) -> impl ToString {
 }
 
 fn part_2(input: aoc::Input) -> impl ToString {
-    let mut left: HashMap<u32, u32> = HashMap::new();
-    let mut right: HashMap<u32, u32> = HashMap::new();
-    for (l, r) in parse(input) {
-        *left.entry(l).or_default() += 1;
-        *right.entry(r).or_default() += 1;
+    let mut bags = (Bag::new(), Bag::new());
+    for x in parse(input) {
+        bags.0.add(x.0);
+        bags.1.add(x.1);
     }
-    let mut sum = 0;
-    for (k, n) in left {
-        sum += k * n * right.get(&k).unwrap_or(&0);
+    let mut sum: usize = 0;
+    for (k, n) in bags.0 {
+        sum += k as usize * n * bags.1.get(k);
     }
     sum
 }
