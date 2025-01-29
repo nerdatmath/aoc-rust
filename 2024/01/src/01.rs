@@ -1,33 +1,28 @@
 aoc::parts!(1, 2);
 
-pub mod bag;
-
-use bag::Bag;
 use aoc::Parse;
+use std::{
+    collections::{BinaryHeap, HashMap},
+    iter::{from_fn, zip},
+};
 
 fn part_1(input: aoc::Input) -> impl ToString {
-    let inp: Vec<(u32, u32)> = parse(input).collect();
-    let n = inp.len();
-    let mut left: Vec<u32> = inp.iter().map(|&x| x.0).collect();
-    left.sort();
-    let mut right: Vec<u32> = inp.iter().map(|&x| x.1).collect();
-    right.sort();
-    let mut sum = 0;
-    for i in 0..n {
-        sum += left[i].abs_diff(right[i]);
-    }
-    sum
+    let mut lists: (BinaryHeap<_>, BinaryHeap<_>) = parse(input).unzip();
+    zip(from_fn(|| lists.0.pop()), from_fn(|| lists.1.pop()))
+        .map(|pair| pair.0.abs_diff(pair.1))
+        .sum::<u32>()
 }
 
 fn part_2(input: aoc::Input) -> impl ToString {
-    let mut bags = (Bag::new(), Bag::new());
-    for x in parse(input) {
-        bags.0.add(x.0);
-        bags.1.add(x.1);
-    }
-    let mut sum: usize = 0;
-    for (k, n) in bags.0 {
-        sum += k as usize * n * bags.1.get(k);
+    let mut map = HashMap::<u32, (usize, usize)>::new();
+    let mut sum = 0usize;
+    for row in parse(input) {
+        let entry = map.entry(row.0).or_default();
+        sum += row.0 as usize * entry.1;
+        entry.0 += 1;
+        let entry = map.entry(row.1).or_default();
+        sum += row.1 as usize * entry.0;
+        entry.1 += 1;
     }
     sum
 }
