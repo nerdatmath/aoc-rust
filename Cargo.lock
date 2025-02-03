@@ -9,6 +9,12 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "9e8641208d3994f6429f6b93a2b173951a80fa0cce1f37cb004a8aca656671a7"
 
 [[package]]
+name = "array2d"
+version = "0.3.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "d8b39cb2c1bf5a7c0dd097aa95ab859cf87dab5a4328900f5388942dc1889f74"
+
+[[package]]
 name = "memchr"
 version = "2.7.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -43,4 +49,12 @@ version = "0.1.0"
 dependencies = [
  "aoclib",
  "nom",
+]
+
+[[package]]
+name = "y2024d04"
+version = "0.1.0"
+dependencies = [
+ "aoclib",
+ "array2d",
 ]
