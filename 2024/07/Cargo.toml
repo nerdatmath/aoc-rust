@@ -1,0 +1,13 @@
+[package]
+name = "y2024d07"
+version = "0.1.0"
+edition = "2021"
+
+[[bin]]
+name = "y2024d07"
+path = "src/07.rs"
+
+[dependencies]
+aoclib = "0.2.1"
+num = "0.4.3"
+nunny = "0.2.1"
