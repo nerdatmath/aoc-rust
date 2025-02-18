@@ -225,3 +225,10 @@ dependencies = [
  "num",
  "nunny",
 ]
+
+[[package]]
+name = "y2024d08"
+version = "0.1.0"
+dependencies = [
+ "aoclib",
+]
