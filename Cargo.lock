@@ -25,6 +25,48 @@ name = "bag"
 version = "0.1.0"
 
 [[package]]
+name = "coord_2d"
+version = "0.3.6"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "f1020a2ed8bf43fc850b01db7570c0e4194d3e3d8d806a5f1857d2ab15feec57"
+
+[[package]]
+name = "direction"
+version = "0.18.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "3c56672976b806b6fe8e41998c6d0503cd02479c6059c47451ce8addc7871271"
+dependencies = [
+ "coord_2d",
+]
+
+[[package]]
+name = "disjoint-hash-set"
+version = "1.0.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "25f329577683c11ed8ca39e000e632f42032f29686c2e0e9ce29071954d5bc13"
+
+[[package]]
+name = "either"
+version = "1.14.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "b7914353092ddf589ad78f25c5c1c21b7f80b0ff8621e7c814c3485b5306da9d"
+
+[[package]]
+name = "grid"
+version = "0.16.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "fb6ae361963ea5fe52038156ea1729f3b4e4ccc0711c362ab2b2d2c0a259e7c3"
+
+[[package]]
+name = "itertools"
+version = "0.14.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "2b192c782037fadd9cfa75548310488aabdbf3d2da73885b31bd0abd03351285"
+dependencies = [
+ "either",
+]
+
+[[package]]
 name = "memchr"
 version = "2.7.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -120,6 +162,10 @@ checksum = "14322bc44ac32006482d77e39a75b84e62f0f934b54583434724d21dd555d8a1"
 dependencies = [
  "serde",
 ]
+
+[[package]]
+name = "point"
+version = "0.1.0"
 
 [[package]]
 name = "proc-macro2"
@@ -249,6 +295,7 @@ name = "y2024d10"
 version = "0.1.0"
 dependencies = [
  "aoclib",
+ "point",
 ]
 
 [[package]]
@@ -257,4 +304,15 @@ version = "0.1.0"
 dependencies = [
  "aoclib",
  "bag",
+]
+
+[[package]]
+name = "y2024d12"
+version = "0.1.0"
+dependencies = [
+ "aoclib",
+ "direction",
+ "disjoint-hash-set",
+ "grid",
+ "itertools",
 ]

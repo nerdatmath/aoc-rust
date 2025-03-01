@@ -1,48 +1,6 @@
 aoc::parts!(1, 2);
 
-#[derive(PartialEq, Eq, Hash, Clone, Copy, Debug)]
-struct Point {
-    x: usize,
-    y: usize,
-}
-
-impl Point {
-    fn up(&self) -> Option<Self> {
-        Some(Self {
-            x: self.x,
-            y: self.y.checked_sub(1)?,
-        })
-    }
-    fn dn(&self) -> Option<Self> {
-        Some(Self {
-            x: self.x,
-            y: self.y.checked_add(1)?,
-        })
-    }
-    fn lt(&self) -> Option<Self> {
-        Some(Self {
-            x: self.x.checked_sub(1)?,
-            y: self.y,
-        })
-    }
-    fn rt(&self) -> Option<Self> {
-        Some(Self {
-            x: self.x.checked_add(1)?,
-            y: self.y,
-        })
-    }
-    fn neighbors(&self) -> impl Iterator<Item = Self> {
-        std::iter::empty()
-            .chain(self.up().iter())
-            .chain(self.dn().iter())
-            .chain(self.lt().iter())
-            .chain(self.rt().iter())
-            .cloned()
-            .collect::<Vec<Point>>()
-            .into_iter()
-    }
-}
-
+use point::Point;
 struct Map {
     data: std::collections::HashMap<Point, char>,
 }
