@@ -3,12 +3,6 @@
 version = 4
 
 [[package]]
-name = "aoclib"
-version = "0.2.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "9e8641208d3994f6429f6b93a2b173951a80fa0cce1f37cb004a8aca656671a7"
-
-[[package]]
 name = "array2d"
 version = "0.3.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -23,12 +17,6 @@ checksum = "ace50bade8e6234aa140d9a2f552bbee1db4d353f69b8217bc503490fc1a9f26"
 [[package]]
 name = "bag"
 version = "0.1.0"
-
-[[package]]
-name = "bit-vec"
-version = "0.8.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "5e764a1d40d510daf35e07be9eb06e75770908c27d411ee6c92109c9840eaaf7"
 
 [[package]]
 name = "coord_2d"
@@ -247,8 +235,6 @@ dependencies = [
 name = "y2024d14"
 version = "0.1.0"
 dependencies = [
- "aoclib",
  "bag",
- "bit-vec",
  "num-traits",
 ]
