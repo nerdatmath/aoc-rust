@@ -29,7 +29,7 @@ impl Point {
             y: self.y,
         })
     }
-    pub fn neighbors(&self) -> impl Iterator<Item = Self> {
+    pub fn neighbors(&self) -> impl Iterator<Item = Self> + use<> {
         std::iter::empty()
             .chain(self.up().iter())
             .chain(self.dn().iter())

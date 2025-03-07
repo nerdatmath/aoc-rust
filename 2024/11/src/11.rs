@@ -12,7 +12,7 @@ impl std::str::FromStr for Stone {
 }
 
 impl Stone {
-    fn blink(&self) -> impl Iterator<Item = Stone> {
+    fn blink(&self) -> impl Iterator<Item = Stone> + use<> {
         let n = self.0;
         if n == 0 {
             return vec![Stone(1)].into_iter();

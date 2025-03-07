@@ -9,7 +9,7 @@ fn to_pair<T: Clone>(iter: impl Iterator<Item = T>) -> (T, T) {
     (v[0].clone(), v[1].clone())
 }
 
-fn generate(input: &str) -> impl Iterator<Item = (u32, u32)> + use<'_> {
+fn generate(input: &str) -> impl Iterator<Item = (u32, u32)> {
     input.lines().map(|s| {
         to_pair(
             s.split_ascii_whitespace()

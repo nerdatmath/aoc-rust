@@ -56,15 +56,15 @@ impl Map {
         self.same_plant_type(plot, (y, x)).then_some((y, x))
     }
 
-    fn vedges_iter(&self) -> impl Iterator<Item = ((usize, usize), (usize, usize))> {
+    fn vedges_iter(&self) -> impl Iterator<Item = ((usize, usize), (usize, usize))> + use<> {
         edges_iter((0, 1, self.0.rows()), (0, 0, self.0.cols()))
     }
 
-    fn hedges_iter(&self) -> impl Iterator<Item = ((usize, usize), (usize, usize))> {
+    fn hedges_iter(&self) -> impl Iterator<Item = ((usize, usize), (usize, usize))> + use<> {
         edges_iter((0, 0, self.0.rows()), (0, 1, self.0.cols()))
     }
 
-    fn connected_plots(&self) -> impl Iterator<Item = ((usize, usize), (usize, usize))> + use<'_> {
+    fn connected_plots(&self) -> impl Iterator<Item = ((usize, usize), (usize, usize))> {
         self.vedges_iter()
             .chain(self.hedges_iter())
             .filter(|&(a, b)| self.same_plant_type(a, b))
@@ -101,7 +101,7 @@ impl Map {
         }
     }
 
-    fn regions(&self) -> impl Iterator<Item = Region> + use<'_> {
+    fn regions(&self) -> impl Iterator<Item = Region> {
         let mut disjoint_plots: DisjointHashSet<(usize, usize)> = self.connected_plots().collect();
         for plot in (0..self.0.rows()).cartesian_product(0..self.0.cols()) {
             disjoint_plots.insert(plot);

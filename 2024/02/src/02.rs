@@ -15,7 +15,7 @@ impl Direction {
     }
 }
 
-fn generate(input: &str) -> impl Iterator<Item = Vec<u32>> + use<'_> {
+fn generate(input: &str) -> impl Iterator<Item = Vec<u32>> {
     input.lines().map(|s| {
         s.split_ascii_whitespace()
             .map(|s| s.parse::<u32>())

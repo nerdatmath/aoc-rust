@@ -4,7 +4,7 @@ struct Map {
 }
 
 impl Map {
-    fn trailheads_iter(&self) -> impl Iterator<Item = Point> + use<'_> {
+    fn trailheads_iter(&self) -> impl Iterator<Item = Point> {
         self.data
             .iter()
             .filter(|&(_, &ch)| ch == '0')
