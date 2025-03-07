@@ -1,7 +1,5 @@
 use bag::Bag;
 
-aoc::parts!(1, 2);
-
 #[derive(PartialEq, Eq, Hash)]
 struct Stone(usize);
 
@@ -87,18 +85,36 @@ impl FromIterator<Stones> for Stones {
     }
 }
 
-fn run(input: aoc::Input, n: usize) -> usize {
-    let mut stones: Stones = input.raw().parse().expect("Parse error.");
+fn run(input: &str, n: usize) -> usize {
+    let mut stones: Stones = input.parse().expect("Parse error.");
     for _ in 0..n {
         stones = stones.blink()
     }
     stones.count()
 }
 
-fn part_1(input: aoc::Input) -> impl ToString {
+fn part1(input: &str) -> usize {
     run(input, 25)
 }
 
-fn part_2(input: aoc::Input) -> impl ToString {
+fn part2(input: &str) -> usize {
     run(input, 75)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::part1;
+
+    const EXAMPLE: &'static str = include_str!("../data/example/input");
+
+    #[test]
+    fn test_part1() {
+        assert_eq!(part1(EXAMPLE), 55312);
+    }
+}
+
+fn main() {
+    let input = include_str!("../data/actual/input");
+    println!("Part 1: {}", part1(input));
+    println!("Part 2: {}", part2(input));
 }

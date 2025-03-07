@@ -5,8 +5,6 @@ use disjoint_hash_set::DisjointHashSet;
 use grid::Grid;
 use itertools::Itertools;
 
-aoc::parts!(1, 2);
-
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
 struct PlantType(char);
 
@@ -128,9 +126,8 @@ impl std::str::FromStr for Map {
     }
 }
 
-fn run(input: aoc::Input, cost: impl Fn(Region) -> usize) -> usize {
+fn run(input: &str, cost: impl Fn(Region) -> usize) -> usize {
     input
-        .raw()
         .parse::<Map>()
         .expect("Parse failed.")
         .regions()
@@ -138,10 +135,45 @@ fn run(input: aoc::Input, cost: impl Fn(Region) -> usize) -> usize {
         .sum()
 }
 
-fn part_1(input: aoc::Input) -> impl ToString {
+fn part1(input: &str) -> usize {
     run(input, |r| r.area * r.perimeter)
 }
 
-fn part_2(input: aoc::Input) -> impl ToString {
+fn part2(input: &str) -> usize {
     run(input, |r| r.area * r.sides)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::{part1, part2};
+
+    const EXAMPLES: &'static [&'static str] = &[
+        include_str!("../data/example1/input"),
+        include_str!("../data/example2/input"),
+        include_str!("../data/example3/input"),
+        include_str!("../data/example4/input"),
+        include_str!("../data/example5/input"),
+    ];
+
+    #[test]
+    fn test_part1() {
+        let results = [140, 772, 1930];
+        for (&input, want) in EXAMPLES.iter().zip(results) {
+            assert_eq!(part1(input), want);
+        }
+    }
+
+    #[test]
+    fn test_part2() {
+        let results = [80, 436, 1206, 236, 368];
+        for (&input, want) in EXAMPLES.iter().zip(results) {
+            assert_eq!(part2(input), want);
+        }
+    }
+}
+
+fn main() {
+    let input = include_str!("../data/actual/input");
+    println!("Part 1: {}", part1(input));
+    println!("Part 2: {}", part2(input));
 }

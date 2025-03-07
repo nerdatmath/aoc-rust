@@ -1,5 +1,3 @@
-aoc::parts!(1, 2);
-
 use std::str::FromStr;
 
 use num::Integer;
@@ -168,15 +166,38 @@ impl Input {
     }
 }
 
-fn part_1(input: aoc::Input) -> impl ToString {
-    input.raw().parse::<Input>().expect("Parse error.").tokens()
+fn part1(input: &str) -> i64 {
+    input.parse::<Input>().expect("Parse error.").tokens()
 }
 
-fn part_2(input: aoc::Input) -> impl ToString {
-    let mut machines = input.raw().parse::<Input>().expect("Parse error.");
+fn part2(input: &str) -> i64 {
+    let mut machines = input.parse::<Input>().expect("Parse error.");
     for Machine { prize, .. } in machines.0.iter_mut() {
         prize.x += 10000000000000;
         prize.y += 10000000000000;
     }
     machines.tokens()
+}
+
+#[cfg(test)]
+mod tests {
+    use super::{part1, part2};
+
+    const EXAMPLE: &'static str = include_str!("../data/example/input");
+
+    #[test]
+    fn test_part1() {
+        assert_eq!(part1(EXAMPLE), 480);
+    }
+
+    #[test]
+    fn test_part2() {
+        assert_eq!(part2(EXAMPLE), 875318608908);
+    }
+}
+
+fn main() {
+    let input = include_str!("../data/actual/input");
+    println!("Part 1: {}", part1(input));
+    println!("Part 2: {}", part2(input));
 }

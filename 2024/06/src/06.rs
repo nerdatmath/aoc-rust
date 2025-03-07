@@ -1,5 +1,3 @@
-aoc::parts!(1, 2);
-
 use std::collections::HashSet;
 
 use array2d::{self, Array2D};
@@ -21,7 +19,7 @@ impl Mappy for Map {
     }
 }
 
-fn parse(input: aoc::Input) -> Map {
+fn parse(input: &str) -> Map {
     let rows: Vec<Vec<char>> = input.lines().map(|s| s.chars().collect()).collect();
     Array2D::from_rows(&rows).unwrap()
 }
@@ -108,7 +106,7 @@ fn march(mut state: GuardState, mappy: &impl Mappy) -> (MarchResult, HashSet<(us
     }
 }
 
-fn part_1(input: aoc::Input) -> impl ToString {
+fn part1(input: &str) -> usize {
     let map = parse(input);
     let state = GuardState::new(&map);
     let (_, visited) = march(state, &map);
@@ -130,7 +128,7 @@ impl Mappy for MapWithObstruction<'_> {
     }
 }
 
-fn part_2(input: aoc::Input) -> impl ToString {
+fn part2(input: &str) -> usize {
     let map = parse(input);
     let state = GuardState::new(&map);
     let (_, visited) = march(state.clone(), &map);
@@ -150,4 +148,27 @@ fn part_2(input: aoc::Input) -> impl ToString {
         }
     }
     count
+}
+
+#[cfg(test)]
+mod tests {
+    use super::{part1, part2};
+
+    const EXAMPLE: &'static str = include_str!("../data/example/input");
+
+    #[test]
+    fn test_part1() {
+        assert_eq!(part1(EXAMPLE), 41);
+    }
+
+    #[test]
+    fn test_part2() {
+        assert_eq!(part2(EXAMPLE), 6);
+    }
+}
+
+fn main() {
+    let input = include_str!("../data/actual/input");
+    println!("Part 1: {}", part1(input));
+    println!("Part 2: {}", part2(input));
 }

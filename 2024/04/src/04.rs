@@ -1,10 +1,8 @@
-aoc::parts!(1, 2);
-
 use std::iter::{repeat, zip};
 
 use array2d::{self, Array2D};
 
-fn parse(input: aoc::Input) -> Array2D<char> {
+fn parse(input: &str) -> Array2D<char> {
     let rows: Vec<Vec<char>> = input.lines().map(|s| s.chars().collect()).collect();
     Array2D::from_rows(&rows).unwrap()
 }
@@ -16,7 +14,7 @@ fn is_xmas(iter: &mut dyn Iterator<Item = (usize, usize)>, array: &Array2D<char>
         == "XMAS"
 }
 
-fn part_1(input: aoc::Input) -> impl ToString {
+fn part1(input: &str) -> usize {
     let array = parse(input);
     let mut count = 0usize;
     for row in 0..array.num_rows() {
@@ -66,7 +64,7 @@ fn is_x_mas(row: usize, column: usize, array: &Array2D<char>) -> bool {
         }
 }
 
-fn part_2(input: aoc::Input) -> impl ToString {
+fn part2(input: &str) -> usize {
     let array = parse(input);
     let mut count = 0usize;
     for row in 0..array.num_rows() {
@@ -77,4 +75,27 @@ fn part_2(input: aoc::Input) -> impl ToString {
         }
     }
     count
+}
+
+#[cfg(test)]
+mod tests {
+    use super::{part1, part2};
+
+    const EXAMPLE: &'static str = include_str!("../data/example/input");
+
+    #[test]
+    fn test_part1() {
+        assert_eq!(part1(EXAMPLE), 18);
+    }
+
+    #[test]
+    fn test_part2() {
+        assert_eq!(part2(EXAMPLE), 9);
+    }
+}
+
+fn main() {
+    let input = include_str!("../data/actual/input");
+    println!("Part 1: {}", part1(input));
+    println!("Part 2: {}", part2(input));
 }

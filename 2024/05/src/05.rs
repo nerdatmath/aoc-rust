@@ -1,7 +1,5 @@
 use std::{cmp::Ordering, collections::HashSet};
 
-aoc::parts!(1, 2);
-
 type Page = u32;
 
 #[derive(Hash, PartialEq, Eq)]
@@ -58,9 +56,8 @@ fn rules_comparer<'a>(rules: &'a HashSet<Rule>) -> impl Fn(&Page, &Page) -> Orde
     }
 }
 
-fn parse(input: aoc::Input) -> (HashSet<Rule>, Vec<Update>) {
+fn parse(input: &str) -> (HashSet<Rule>, Vec<Update>) {
     let (rules_str, updates_str) = input
-        .raw()
         .split_once("\n\n")
         .expect("Input must contain rules and updates, separated by an empty line.");
     (
@@ -69,7 +66,7 @@ fn parse(input: aoc::Input) -> (HashSet<Rule>, Vec<Update>) {
     )
 }
 
-fn part_1(input: aoc::Input) -> impl ToString {
+fn part1(input: &str) -> Page {
     let (rules, updates) = parse(input);
     let compare = rules_comparer(&rules);
     updates
@@ -79,7 +76,7 @@ fn part_1(input: aoc::Input) -> impl ToString {
         .sum::<Page>()
 }
 
-fn part_2(input: aoc::Input) -> impl ToString {
+fn part2(input: &str) -> Page {
     let (rules, mut updates) = parse(input);
     let compare = rules_comparer(&rules);
     updates
@@ -90,4 +87,26 @@ fn part_2(input: aoc::Input) -> impl ToString {
             middle(&pages)
         })
         .sum::<Page>()
+}
+#[cfg(test)]
+mod tests {
+    use super::{part1, part2};
+
+    const EXAMPLE: &'static str = include_str!("../data/example/input");
+
+    #[test]
+    fn test_part1() {
+        assert_eq!(part1(EXAMPLE), 143);
+    }
+
+    #[test]
+    fn test_part2() {
+        assert_eq!(part2(EXAMPLE), 123);
+    }
+}
+
+fn main() {
+    let input = include_str!("../data/actual/input");
+    println!("Part 1: {}", part1(input));
+    println!("Part 2: {}", part2(input));
 }

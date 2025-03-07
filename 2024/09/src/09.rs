@@ -1,5 +1,3 @@
-aoc::parts!(1, 2);
-
 #[derive(Clone, Debug)]
 enum Block {
     File(usize),
@@ -110,8 +108,8 @@ trait Part {
         disk.0 = spans;
     }
 
-    fn run(input: aoc::Input) -> usize {
-        let mut disk: Disk = input.raw().parse().expect("Parsing error.");
+    fn run(input: &str) -> usize {
+        let mut disk: Disk = input.parse().expect("Parsing error.");
         // dbg!(&disk);
         Self::defrag(&mut disk);
         // dbg!(&disk);
@@ -119,7 +117,7 @@ trait Part {
     }
 }
 
-mod part_1 {
+mod part1 {
     pub enum Impl {}
 
     struct Allocator {
@@ -174,7 +172,7 @@ mod part_1 {
     }
 }
 
-mod part_2 {
+mod part2 {
     pub enum Impl {}
 
     struct Allocator {
@@ -222,10 +220,33 @@ mod part_2 {
     }
 }
 
-fn part_1(input: aoc::Input) -> impl ToString {
-    part_1::Impl::run(input)
+fn part1(input: &str) -> usize {
+    part1::Impl::run(input)
 }
 
-fn part_2(input: aoc::Input) -> impl ToString {
-    part_2::Impl::run(input)
+fn part2(input: &str) -> usize {
+    part2::Impl::run(input)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::{part1, part2};
+
+    const EXAMPLE: &'static str = include_str!("../data/example/input");
+
+    #[test]
+    fn test_part1() {
+        assert_eq!(part1(EXAMPLE), 1928);
+    }
+
+    #[test]
+    fn test_part2() {
+        assert_eq!(part2(EXAMPLE), 2858);
+    }
+}
+
+fn main() {
+    let input = include_str!("../data/actual/input");
+    println!("Part 1: {}", part1(input));
+    println!("Part 2: {}", part2(input));
 }

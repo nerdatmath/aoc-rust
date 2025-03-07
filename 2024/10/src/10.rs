@@ -1,5 +1,3 @@
-aoc::parts!(1, 2);
-
 use point::Point;
 struct Map {
     data: std::collections::HashMap<Point, char>,
@@ -76,8 +74,8 @@ trait Part {
     type Output: ToString + std::iter::Sum;
     type Attribute: Attribute + Into<Self::Output>;
 
-    fn run(input: aoc::Input) -> Self::Output {
-        let map = input.raw().parse::<Map>().expect("Parse failed.");
+    fn run(input: &str) -> Self::Output {
+        let map = input.parse::<Map>().expect("Parse failed.");
         let mut attributes = Attributes::<Self::Attribute>::new(&map);
         map.trailheads_iter()
             .map(|p| attributes.get_attribute(p).into())
@@ -85,7 +83,7 @@ trait Part {
     }
 }
 
-mod part_1 {
+mod part1 {
     use super::*;
 
     pub enum Impl {}
@@ -123,7 +121,7 @@ mod part_1 {
     }
 }
 
-mod part_2 {
+mod part2 {
     use super::*;
 
     pub enum Impl {}
@@ -155,10 +153,33 @@ mod part_2 {
     }
 }
 
-fn part_1(input: aoc::Input) -> impl ToString {
-    part_1::Impl::run(input)
+fn part1(input: &str) -> usize {
+    part1::Impl::run(input)
 }
 
-fn part_2(input: aoc::Input) -> impl ToString {
-    part_2::Impl::run(input)
+fn part2(input: &str) -> usize {
+    part2::Impl::run(input)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::{part1, part2};
+
+    const EXAMPLE: &'static str = include_str!("../data/example/input");
+
+    #[test]
+    fn test_part1() {
+        assert_eq!(part1(EXAMPLE), 36);
+    }
+
+    #[test]
+    fn test_part2() {
+        assert_eq!(part2(EXAMPLE), 81);
+    }
+}
+
+fn main() {
+    let input = include_str!("../data/actual/input");
+    println!("Part 1: {}", part1(input));
+    println!("Part 2: {}", part2(input));
 }

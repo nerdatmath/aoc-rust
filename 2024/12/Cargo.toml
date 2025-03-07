@@ -1,14 +1,13 @@
 [package]
 name = "y2024d12"
 version = "0.1.0"
-edition = "2021"
+edition = "2024"
 
 [[bin]]
 name = "y2024d12"
 path = "src/12.rs"
 
 [dependencies]
-aoclib = "0.2.1"
 direction = "0.18.1"
 disjoint-hash-set = "1.0.0"
 grid = "0.16.1"

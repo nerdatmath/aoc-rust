@@ -25,6 +25,12 @@ name = "bag"
 version = "0.1.0"
 
 [[package]]
+name = "bit-vec"
+version = "0.8.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "5e764a1d40d510daf35e07be9eb06e75770908c27d411ee6c92109c9840eaaf7"
+
+[[package]]
 name = "coord_2d"
 version = "0.3.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -155,92 +161,21 @@ dependencies = [
 ]
 
 [[package]]
-name = "nunny"
-version = "0.2.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "14322bc44ac32006482d77e39a75b84e62f0f934b54583434724d21dd555d8a1"
-dependencies = [
- "serde",
-]
-
-[[package]]
 name = "point"
 version = "0.1.0"
 
 [[package]]
-name = "proc-macro2"
-version = "1.0.93"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "60946a68e5f9d28b0dc1c21bb8a97ee7d018a8b322fa57838ba31cc878e22d99"
-dependencies = [
- "unicode-ident",
-]
-
-[[package]]
-name = "quote"
-version = "1.0.38"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "0e4dccaaaf89514f546c693ddc140f729f958c247918a13380cccc6078391acc"
-dependencies = [
- "proc-macro2",
-]
-
-[[package]]
-name = "serde"
-version = "1.0.217"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "02fc4265df13d6fa1d00ecff087228cc0a2b5f3c0e87e258d8b94a156e984c70"
-dependencies = [
- "serde_derive",
-]
-
-[[package]]
-name = "serde_derive"
-version = "1.0.217"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "5a9bf7cf98d04a2b28aead066b7496853d4779c9cc183c440dbac457641e19a0"
-dependencies = [
- "proc-macro2",
- "quote",
- "syn",
-]
-
-[[package]]
-name = "syn"
-version = "2.0.98"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "36147f1a48ae0ec2b5b3bc5b537d267457555a10dc06f3dbc8cb11ba3006d3b1"
-dependencies = [
- "proc-macro2",
- "quote",
- "unicode-ident",
-]
-
-[[package]]
-name = "unicode-ident"
-version = "1.0.16"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a210d160f08b701c8721ba1c726c11662f877ea6b7094007e1ca9a1041945034"
-
-[[package]]
 name = "y2024d01"
 version = "0.1.0"
-dependencies = [
- "aoclib",
-]
 
 [[package]]
 name = "y2024d02"
 version = "0.1.0"
-dependencies = [
- "aoclib",
-]
 
 [[package]]
 name = "y2024d03"
 version = "0.1.0"
 dependencies = [
- "aoclib",
  "nom",
 ]
 
@@ -248,22 +183,17 @@ dependencies = [
 name = "y2024d04"
 version = "0.1.0"
 dependencies = [
- "aoclib",
  "array2d",
 ]
 
 [[package]]
 name = "y2024d05"
 version = "0.1.0"
-dependencies = [
- "aoclib",
-]
 
 [[package]]
 name = "y2024d06"
 version = "0.1.0"
 dependencies = [
- "aoclib",
  "array2d",
 ]
 
@@ -271,30 +201,21 @@ dependencies = [
 name = "y2024d07"
 version = "0.1.0"
 dependencies = [
- "aoclib",
  "num",
- "nunny",
 ]
 
 [[package]]
 name = "y2024d08"
 version = "0.1.0"
-dependencies = [
- "aoclib",
-]
 
 [[package]]
 name = "y2024d09"
 version = "0.1.0"
-dependencies = [
- "aoclib",
-]
 
 [[package]]
 name = "y2024d10"
 version = "0.1.0"
 dependencies = [
- "aoclib",
  "point",
 ]
 
@@ -302,7 +223,6 @@ dependencies = [
 name = "y2024d11"
 version = "0.1.0"
 dependencies = [
- "aoclib",
  "bag",
 ]
 
@@ -310,7 +230,6 @@ dependencies = [
 name = "y2024d12"
 version = "0.1.0"
 dependencies = [
- "aoclib",
  "direction",
  "disjoint-hash-set",
  "grid",
@@ -321,6 +240,15 @@ dependencies = [
 name = "y2024d13"
 version = "0.1.0"
 dependencies = [
- "aoclib",
  "num",
+]
+
+[[package]]
+name = "y2024d14"
+version = "0.1.0"
+dependencies = [
+ "aoclib",
+ "bag",
+ "bit-vec",
+ "num-traits",
 ]

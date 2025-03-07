@@ -1,4 +1,3 @@
-aoc::parts!(1, 2);
 mod parse;
 
 type Num = u32;
@@ -37,16 +36,34 @@ fn run(mut state: State, instruction: &Instruction) -> State {
     state
 }
 
-fn part_1(input: aoc::Input) -> impl ToString {
-    parse::parse(input.raw())
-        .iter()
-        .fold(State::new(true), run)
-        .sum
+fn part1(input: &str) -> Num {
+    parse::parse(input).iter().fold(State::new(true), run).sum
 }
 
-fn part_2(input: aoc::Input) -> impl ToString {
-    parse::parse(input.raw())
-        .iter()
-        .fold(State::new(false), run)
-        .sum
+fn part2(input: &str) -> Num {
+    parse::parse(input).iter().fold(State::new(false), run).sum
+}
+
+#[cfg(test)]
+mod tests {
+    use super::{part1, part2};
+
+    const EXAMPLE1: &'static str = include_str!("../data/example1/input");
+    const EXAMPLE2: &'static str = include_str!("../data/example2/input");
+
+    #[test]
+    fn test_part1() {
+        assert_eq!(part1(EXAMPLE1), 161);
+    }
+
+    #[test]
+    fn test_part2() {
+        assert_eq!(part2(EXAMPLE2), 48);
+    }
+}
+
+fn main() {
+    let input = include_str!("../data/actual/input");
+    println!("Part 1: {}", part1(input));
+    println!("Part 2: {}", part2(input));
 }

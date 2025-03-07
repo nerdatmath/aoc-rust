@@ -1,6 +1,6 @@
-aoc::parts!(1, 2);
-
 use std::{fmt::Debug, iter::Sum, str::FromStr};
+
+use num::Zero;
 
 trait Part1Num
 where
@@ -121,21 +121,21 @@ impl<T> Equation<T> {
 
     fn value<I, Unapply>(&self, unapply: &Unapply) -> T
     where
-        T: Copy + PartialEq + num::Zero,
+        T: Copy + PartialEq + Zero,
         I: Iterator<Item = T>,
         Unapply: Fn(T, T) -> I,
     {
         if self.is_valid(unapply) {
             self.answer
         } else {
-            num::zero()
+            Zero::zero()
         }
     }
 }
 
-fn run<T, I, Unapply>(input: aoc::Input, unapply: &Unapply) -> T
+fn run<T, I, Unapply>(input: &str, unapply: &Unapply) -> T
 where
-    T: Copy + PartialEq + Debug + Sum + num::Zero,
+    T: Copy + PartialEq + Debug + Sum + Zero,
     T: std::str::FromStr,
     <T as std::str::FromStr>::Err: std::fmt::Debug,
     I: Iterator<Item = T>,
@@ -166,10 +166,33 @@ impl Part2Num for Num {
     }
 }
 
-fn part_1(input: aoc::Input) -> impl ToString {
+fn part1(input: &str) -> Num {
     run(input, &Num::unapply_part1)
 }
 
-fn part_2(input: aoc::Input) -> impl ToString {
+fn part2(input: &str) -> Num {
     run(input, &Num::unapply_part2)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::{part1, part2};
+
+    const EXAMPLE: &'static str = include_str!("../data/example/input");
+
+    #[test]
+    fn test_part1() {
+        assert_eq!(part1(EXAMPLE), 3749);
+    }
+
+    #[test]
+    fn test_part2() {
+        assert_eq!(part2(EXAMPLE), 11387);
+    }
+}
+
+fn main() {
+    let input = include_str!("../data/actual/input");
+    println!("Part 1: {}", part1(input));
+    println!("Part 2: {}", part2(input));
 }
