@@ -7,7 +7,7 @@ impl Map {
     fn trailheads_iter(&self) -> impl Iterator<Item = Point> + use<'_> {
         self.data
             .iter()
-            .filter(|(_, &ch)| ch == '0')
+            .filter(|&(_, &ch)| ch == '0')
             .map(|(p, _)| p)
             .cloned()
     }
