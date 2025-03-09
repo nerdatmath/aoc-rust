@@ -1,8 +1,9 @@
-use std::{cmp::Ordering, fmt::Debug, hash::Hash, marker::PhantomData, str::FromStr};
+use orthant::Orthant;
+use std::{cmp::Ordering, fmt::Debug, marker::PhantomData, str::FromStr};
 
 use itertools::Itertools;
 
-type Scalar = u16;
+type Scalar = u8;
 
 trait Modular: modular::Modular<Scalar = Scalar> {}
 
@@ -10,43 +11,11 @@ impl<T: modular::Modular<Scalar = Scalar>> Modular for T {}
 
 mod modular;
 
-modular!(Mod101, Scalar, 101);
-modular!(Mod103, Scalar, 103);
-
 use coord::Coord;
 
 mod coord;
 
-trait Orthant {
-    type Output: Eq + Hash;
-    fn orthant(&self) -> Self::Output;
-}
-
-fn center<Mod: Modular>() -> Scalar {
-    (Mod::MODULUS - 1) / 2
-}
-
-impl<T> Orthant for T
-where
-    T: Modular + Into<Scalar> + Copy,
-{
-    type Output = Ordering;
-    fn orthant(&self) -> Ordering {
-        let s: Scalar = (*self).into();
-        s.cmp(&center::<Self>())
-    }
-}
-
-impl<Row, Col> Orthant for Coord<Row, Col>
-where
-    Row: Orthant,
-    Col: Orthant,
-{
-    type Output = (<Row as Orthant>::Output, <Col as Orthant>::Output);
-    fn orthant(&self) -> Self::Output {
-        (self.row.orthant(), self.col.orthant())
-    }
-}
+mod orthant;
 
 #[derive(Debug, Clone, Copy)]
 struct Robot<Coord> {
@@ -181,18 +150,15 @@ where
     }
 }
 
-type Part1 = Part1Base<Coord<Mod103, Mod101>>;
-type Part2 = Part2Base<Coord<Mod103, Mod101>>;
+type Part1 = Part1Base<Coord<modular::Mod<103>, modular::Mod<101>>>;
+type Part2 = Part2Base<Coord<modular::Mod<103>, modular::Mod<101>>>;
 
 #[cfg(test)]
 mod tests {
-    use super::{Part, Part1Base, Scalar};
-    use crate::modular;
+    use super::{Part, Part1Base};
+    use crate::modular::Mod;
 
-    modular!(Mod7, Scalar, 7);
-    modular!(Mod11, Scalar, 11);
-    type Coord = super::Coord<Mod7, Mod11>;
-    type Part1 = Part1Base<Coord>;
+    type Part1 = Part1Base<super::Coord<Mod<7>, Mod<11>>>;
 
     const EXAMPLE: &'static str = include_str!("../data/example/input");
 

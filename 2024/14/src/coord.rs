@@ -1,4 +1,9 @@
-use std::str::FromStr;
+use std::{
+    ops::{AddAssign, SubAssign},
+    str::FromStr,
+};
+
+use crate::orthant::Orthant;
 
 #[derive(Clone, Copy, Debug)]
 pub struct Coord<Row, Col> {
@@ -21,7 +26,7 @@ impl<Row: FromStr, Col: FromStr> FromStr for Coord<Row, Col> {
 }
 
 macro_rules! coord_op_assign {
-    ($trait:path, $fn:ident) => {
+    ($trait:ident, $fn:ident) => {
         impl<Row: $trait, Col: $trait> $trait for Coord<Row, Col> {
             fn $fn(&mut self, rhs: Self) {
                 self.row.$fn(rhs.row);
@@ -59,8 +64,19 @@ macro_rules! coord_op_scalar {
     };
 }
 
-coord_op_assign!(std::ops::AddAssign, add_assign);
-coord_op_assign!(std::ops::SubAssign, sub_assign);
+coord_op_assign!(AddAssign, add_assign);
+coord_op_assign!(SubAssign, sub_assign);
 coord_binop!(std::ops::Add, add);
 coord_binop!(std::ops::Sub, sub);
 coord_op_scalar!(T, std::ops::Mul<T>, mul);
+
+impl<Row, Col> Orthant for Coord<Row, Col>
+where
+    Row: Orthant,
+    Col: Orthant,
+{
+    type Output = (<Row as Orthant>::Output, <Col as Orthant>::Output);
+    fn orthant(&self) -> Self::Output {
+        (self.row.orthant(), self.col.orthant())
+    }
+}
