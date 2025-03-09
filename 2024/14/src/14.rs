@@ -1,131 +1,54 @@
-use std::{
-    cmp::Ordering,
-    fmt::Debug,
-    ops::{Add, Mul},
-    str::FromStr,
-};
+use std::{cmp::Ordering, fmt::Debug, hash::Hash, marker::PhantomData, str::FromStr};
 
-type Scalar = i32;
+use itertools::Itertools;
 
-trait Modular {
-    const MODULUS: Scalar;
+type Scalar = u16;
 
-    fn normalize(n: Scalar) -> Self;
+trait Modular: modular::Modular<Scalar = Scalar> {}
+
+impl<T: modular::Modular<Scalar = Scalar>> Modular for T {}
+
+mod modular;
+
+modular!(Mod101, Scalar, 101);
+modular!(Mod103, Scalar, 103);
+
+use coord::Coord;
+
+mod coord;
+
+trait Orthant {
+    type Output: Eq + Hash;
+    fn orthant(&self) -> Self::Output;
 }
 
-macro_rules! modular {
-    ( $name:ident, $modulus:literal ) => {
-        #[derive(Clone)]
-        struct $name(Scalar);
-
-        impl Modular for $name {
-            const MODULUS: Scalar = $modulus;
-
-            fn normalize(n: Scalar) -> $name {
-                $name(n.rem_euclid(Self::MODULUS))
-            }
-        }
-
-        impl FromStr for $name {
-            type Err = <Scalar as FromStr>::Err;
-
-            fn from_str(s: &str) -> Result<Self, Self::Err> {
-                Ok(Self::normalize(s.parse::<Scalar>()?))
-            }
-        }
-
-        impl From<$name> for Scalar {
-            fn from(value: $name) -> Self {
-                value.0
-            }
-        }
-
-        impl Add for $name {
-            type Output = Self;
-
-            fn add(self, rhs: Self) -> Self::Output {
-                Self::normalize(self.0 + rhs.0)
-            }
-        }
-
-        impl Mul<Scalar> for $name {
-            type Output = Self;
-
-            fn mul(self, rhs: Scalar) -> Self {
-                Self::normalize(self.0 * rhs)
-            }
-        }
-    };
+fn center<Mod: Modular>() -> Scalar {
+    (Mod::MODULUS - 1) / 2
 }
 
-modular!(Mod7, 7);
-modular!(Mod11, 11);
-modular!(Mod101, 101);
-modular!(Mod103, 103);
-
-#[derive(Clone, Copy, Debug)]
-struct Coord<Row, Col> {
-    row: Row,
-    col: Col,
-}
-
-struct ParseCoordError;
-
-impl<Row: FromStr, Col: FromStr> FromStr for Coord<Row, Col> {
-    type Err = ParseCoordError;
-
-    fn from_str(s: &str) -> Result<Self, Self::Err> {
-        let (col, row) = s.split_once(',').ok_or(ParseCoordError)?;
-        Ok(Self {
-            row: row.parse().map_err(|_| ParseCoordError)?,
-            col: col.parse().map_err(|_| ParseCoordError)?,
-        })
-    }
-}
-
-impl<Row: Add, Col: Add> Add for Coord<Row, Col> {
-    type Output = Coord<<Row as Add>::Output, <Col as Add>::Output>;
-
-    fn add(self, rhs: Self) -> Self::Output {
-        Self::Output {
-            row: self.row + rhs.row,
-            col: self.col + rhs.col,
-        }
-    }
-}
-
-impl<Row: Mul<Scalar>, Col: Mul<Scalar>> Mul<Scalar> for Coord<Row, Col> {
-    type Output = Coord<<Row as Mul<Scalar>>::Output, <Col as Mul<Scalar>>::Output>;
-
-    fn mul(self, rhs: Scalar) -> Self::Output {
-        Self::Output {
-            row: self.row * rhs,
-            col: self.col * rhs,
-        }
-    }
-}
-
-type Quadrant = (Ordering, Ordering);
-
-trait HasQuadrant {
-    fn quadrant(self) -> Quadrant;
-}
-
-impl<Row, Col> HasQuadrant for Coord<Row, Col>
+impl<T> Orthant for T
 where
-    Row: Modular + Into<Scalar> + Clone,
-    Col: Modular + Into<Scalar> + Clone,
+    T: Modular + Into<Scalar> + Copy,
 {
-    fn quadrant(self) -> Quadrant {
-        let Coord { row, col } = self;
-        (
-            row.into().cmp(&((<Row as Modular>::MODULUS - 1) / 2)),
-            col.into().cmp(&((<Col as Modular>::MODULUS - 1) / 2)),
-        )
+    type Output = Ordering;
+    fn orthant(&self) -> Ordering {
+        let s: Scalar = (*self).into();
+        s.cmp(&center::<Self>())
     }
 }
 
-#[derive(Debug)]
+impl<Row, Col> Orthant for Coord<Row, Col>
+where
+    Row: Orthant,
+    Col: Orthant,
+{
+    type Output = (<Row as Orthant>::Output, <Col as Orthant>::Output);
+    fn orthant(&self) -> Self::Output {
+        (self.row.orthant(), self.col.orthant())
+    }
+}
+
+#[derive(Debug, Clone, Copy)]
 struct Robot<Coord> {
     p: Coord,
     v: Coord,
@@ -153,61 +76,134 @@ impl<Coord: FromStr> FromStr for Robot<Coord> {
 }
 
 trait Runnable {
-    type Output;
-
-    fn run(&self, steps: Scalar) -> Self::Output;
+    fn run(&mut self, steps: Scalar);
+    fn step(&mut self);
 }
 
 impl<Coord> Runnable for Robot<Coord>
 where
-    Coord: Mul<Scalar, Output = Coord>,
-    Coord: Add<Output = Coord>,
-    Coord: Clone,
+    Coord: std::ops::Mul<Scalar, Output = Coord>,
+    Coord: std::ops::AddAssign,
+    Coord: Copy,
 {
-    type Output = Coord;
-
-    fn run(&self, steps: Scalar) -> Self::Output {
-        self.p.clone() + (self.v.clone() * steps)
+    fn run(&mut self, steps: Scalar) {
+        self.p += self.v * steps;
+    }
+    fn step(&mut self) {
+        self.p += self.v;
     }
 }
 
-fn part1<Coord>(input: &str) -> usize
+trait Part {
+    fn run(input: &str) -> usize;
+}
+
+struct Part1Base<Coord> {
+    _marker: PhantomData<Coord>,
+}
+
+impl<Coord> Part for Part1Base<Coord>
 where
-    Robot<Coord>: Runnable + FromStr,
-    <Robot<Coord> as Runnable>::Output: HasQuadrant,
+    Coord: Orthant<Output = (Ordering, Ordering)> + Debug,
+    Robot<Coord>: Runnable + FromStr + Clone,
     <Robot<Coord> as FromStr>::Err: Debug,
 {
-    input
-        .lines()
-        .map(|s| s.parse::<Robot<Coord>>().expect("Parse failed."))
-        .map(|r| r.run(100))
-        .map(|c| c.quadrant())
-        .collect::<bag::Bag<Quadrant>>()
-        .into_iter()
-        .filter(|(q, _)| !q.0.is_eq() && !q.1.is_eq())
-        .map(|(_, n)| n)
-        .product::<usize>()
+    fn run(input: &str) -> usize {
+        input
+            .lines()
+            .map(|s| s.parse::<Robot<Coord>>().expect("Parse failed."))
+            .map(|r| {
+                let mut r = r.clone();
+                r.run(100);
+                r.p.orthant()
+            })
+            .counts()
+            .into_iter()
+            .filter_map(|((x, y), n)| (x.is_ne() && y.is_ne()).then_some(n))
+            .product::<usize>()
+    }
 }
+
+struct Part2Base<Coord> {
+    _marker: PhantomData<Coord>,
+}
+
+fn map_robots<Row, Col>(robots: &Vec<Robot<Coord<Row, Col>>>) -> grid::Grid<bool>
+where
+    Row: Modular + Clone,
+    Col: Modular + Clone,
+    usize: From<Row>,
+    usize: From<Col>,
+{
+    let mut grid = grid::Grid::new(
+        <Row as modular::Modular>::MODULUS.into(),
+        <Col as modular::Modular>::MODULUS.into(),
+    );
+    for r in robots {
+        let Coord { row, col } = &r.p;
+        grid[(row.clone().into(), col.clone().into())] = true;
+    }
+    grid
+}
+
+fn christmassy(grid: &grid::Grid<bool>) -> bool {
+    grid.iter_rows().any(|row| {
+        row.chunk_by(|&b| b)
+            .into_iter()
+            .any(|(&b, i)| b && i.count() > 15)
+    })
+}
+
+impl<Row, Col> Part for Part2Base<Coord<Row, Col>>
+where
+    Row: Modular + Clone,
+    Col: Modular + Clone,
+    usize: From<Row> + From<Col>,
+    Robot<Coord<Row, Col>>: Runnable + FromStr,
+    <Robot<Coord<Row, Col>> as FromStr>::Err: Debug,
+{
+    fn run(input: &str) -> usize {
+        let mut robots: Vec<Robot<Coord<Row, Col>>> = input
+            .lines()
+            .map(|s| s.parse().expect("Parse failed."))
+            .collect();
+        for i in 0..(usize::from(<Row as modular::Modular>::MODULUS)
+            * usize::from(<Col as modular::Modular>::MODULUS))
+        {
+            for r in &mut robots {
+                r.step();
+            }
+            if christmassy(&map_robots(&robots)) {
+                return i + 1;
+            }
+        }
+        0
+    }
+}
+
+type Part1 = Part1Base<Coord<Mod103, Mod101>>;
+type Part2 = Part2Base<Coord<Mod103, Mod101>>;
 
 #[cfg(test)]
 mod tests {
-    use super::{part1 /*part2*/, Coord, Mod11, Mod7};
+    use super::{Part, Part1Base, Scalar};
+    use crate::modular;
+
+    modular!(Mod7, Scalar, 7);
+    modular!(Mod11, Scalar, 11);
+    type Coord = super::Coord<Mod7, Mod11>;
+    type Part1 = Part1Base<Coord>;
 
     const EXAMPLE: &'static str = include_str!("../data/example/input");
 
     #[test]
     fn test_part1() {
-        assert_eq!(part1::<Coord<Mod7, Mod11>>(EXAMPLE), 12);
+        assert_eq!(Part1::run(EXAMPLE), 12);
     }
-
-    // #[test]
-    // fn test_part2() {
-    //     assert_eq!(part2(EXAMPLE), xx);
-    // }
 }
 
 fn main() {
     let input = include_str!("../data/actual/input");
-    println!("Part 1: {}", part1::<Coord<Mod103, Mod101>>(input));
-    // println!("Part 2: {}", part2(input));
+    println!("Part 1: {}", Part1::run(input));
+    println!("Part 2: {}", Part2::run(input));
 }

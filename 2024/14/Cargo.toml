@@ -8,5 +8,6 @@ name = "y2024d14"
 path = "src/14.rs"
 
 [dependencies]
-bag = { version = "0.1.0", path = "../../bag" }
+grid = "0.16.1"
+itertools = "0.14.0"
 num-traits = "0.2.19"

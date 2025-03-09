@@ -235,6 +235,7 @@ dependencies = [
 name = "y2024d14"
 version = "0.1.0"
 dependencies = [
- "bag",
+ "grid",
+ "itertools",
  "num-traits",
 ]
