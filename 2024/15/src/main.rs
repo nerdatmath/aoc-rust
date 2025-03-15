@@ -1,12 +1,20 @@
+use derive_more::TryFrom;
 use game_grid::*;
-use std::{collections::HashSet, str::FromStr};
+use parse_display::FromStr;
+use std::collections::HashSet;
 
-#[derive(Copy, Clone, Debug, PartialEq, Eq)]
+#[derive(Copy, Clone, Debug, PartialEq, Eq, TryFrom, FromStr)]
+#[try_from(repr)]
+#[repr(u8)]
 enum Dir {
-    N,
-    S,
-    E,
-    W,
+    #[display("^")]
+    N = b'^',
+    #[display("v")]
+    S = b'v',
+    #[display(">")]
+    E = b'>',
+    #[display("<")]
+    W = b'<',
 }
 
 impl Dir {
@@ -15,19 +23,15 @@ impl Dir {
     }
 }
 
+#[derive(Debug)]
 struct ParseDirError;
 
 impl TryFrom<char> for Dir {
     type Error = ParseDirError;
 
     fn try_from(ch: char) -> Result<Self, Self::Error> {
-        Ok(match ch {
-            '^' => Dir::N,
-            'v' => Dir::S,
-            '<' => Dir::W,
-            '>' => Dir::E,
-            _ => return Err(ParseDirError),
-        })
+        Ok(Self::try_from(u8::try_from(ch).map_err(|_| ParseDirError)?)
+            .map_err(|_| ParseDirError)?)
     }
 }
 
@@ -78,7 +82,7 @@ enum Cell {
     RBox,
 }
 
-#[derive(Debug)]
+#[derive(Debug, FromStr)]
 struct Map(Grid<Cell>);
 
 impl Map {
@@ -128,26 +132,22 @@ impl Map {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, FromStr)]
+#[display("{map}\n\n{directions}")]
 struct Puzzle {
     map: Map,
+    #[display(with=ParseDirections)]
     directions: Vec<Dir>,
 }
 
-#[derive(Debug)]
-struct ParsePuzzleError;
+struct ParseDirections;
 
-impl FromStr for Puzzle {
-    type Err = ParsePuzzleError;
-
-    fn from_str(s: &str) -> Result<Self, Self::Err> {
-        let (map, directions) = s.split_once("\n\n").ok_or(ParsePuzzleError)?;
-        let map: Map = Map(map.parse().map_err(|_| ParsePuzzleError)?);
-        let directions: Vec<Dir> = directions
-            .chars()
-            .filter_map(|ch| (ch != '\n').then(|| Dir::try_from(ch).map_err(|_| ParsePuzzleError)))
-            .collect::<Result<_, _>>()?;
-        Ok(Puzzle { map, directions })
+impl parse_display::FromStrFormat<Vec<Dir>> for ParseDirections {
+    type Err = ParseDirError;
+    fn parse(&self, s: &str) -> core::result::Result<Vec<Dir>, Self::Err> {
+        s.chars()
+            .filter_map(|ch| (ch != '\n').then(|| Dir::try_from(ch)))
+            .collect()
     }
 }
 

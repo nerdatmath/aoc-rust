@@ -1,7 +1,11 @@
 use super::Instruction;
 
 use nom::{
-    branch::alt, bytes::complete::tag, character::complete::{anychar, char, u32}, combinator::value, IResult, Parser
+    IResult, Parser,
+    branch::alt,
+    bytes::complete::tag,
+    character::complete::{anychar, char, u32},
+    combinator::value,
 };
 
 pub fn parse(string: &str) -> Vec<Instruction> {
@@ -22,7 +26,8 @@ pub fn parse_instruction(i: &str) -> IResult<&str, Option<Instruction>> {
         value(Some(Instruction::Do), tag("do()")),
         value(Some(Instruction::Dont), tag("don't()")),
         value(None, anychar),
-    )).parse(i)
+    ))
+    .parse(i)
 }
 
 fn parse_mul_instruction(i: &str) -> IResult<&str, Instruction> {

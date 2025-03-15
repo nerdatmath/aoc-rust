@@ -9,3 +9,6 @@ path = "src/11.rs"
 
 [dependencies]
 bag = { version = "0.1.0", path = "../../bag" }
+derive_more = { workspace = true, features = ["deref"] }
+parse-display = { workspace = true }
+parse-display-with = { workspace = true }

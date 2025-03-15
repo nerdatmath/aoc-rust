@@ -4,4 +4,7 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
-game-grid = "0.1.3"
+derive_more = { workspace = true, features = ["try_from"] }
+game-grid.workspace = true
+parse-display.workspace = true
+parse-display-with.workspace = true

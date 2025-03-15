@@ -8,4 +8,6 @@ name = "y2024d07"
 path = "src/07.rs"
 
 [dependencies]
-num = "0.4.3"
+num = { workspace = true }
+parse-display = { workspace = true }
+parse-display-with = { workspace = true }

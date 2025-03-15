@@ -8,4 +8,5 @@ name = "y2024d04"
 path = "src/04.rs"
 
 [dependencies]
-array2d = "0.3.2"
+game-grid = { workspace = true }
+itertools = { workspace = true }

@@ -1,7 +1,10 @@
-use std::str::FromStr;
-
+use derive_more::Deref;
 use num::Integer;
+use parse_display::FromStr;
+use parse_display_with::formats::delimiter;
 
+#[derive(FromStr)]
+#[display("Button A: {button_a}\nButton B: {button_b}\nPrize: {prize}")]
 struct Machine {
     button_a: Button,
     button_b: Button,
@@ -43,124 +46,30 @@ impl Machine {
     }
 }
 
-#[derive(Debug)]
-enum ParseMachineError {
-    Incomplete,
-    ExtraLines,
-    Button(ParseButtonError),
-    Prize(ParsePrizeError),
-}
-
-impl FromStr for Machine {
-    type Err = ParseMachineError;
-
-    fn from_str(s: &str) -> Result<Self, Self::Err> {
-        let mut lines = s.split("\n");
-        let button_a: Button = lines
-            .next()
-            .ok_or(ParseMachineError::Incomplete)?
-            .parse()
-            .map_err(ParseMachineError::Button)?;
-        let button_b: Button = lines
-            .next()
-            .ok_or(ParseMachineError::Incomplete)?
-            .parse()
-            .map_err(ParseMachineError::Button)?;
-        let prize: Prize = lines
-            .next()
-            .ok_or(ParseMachineError::Incomplete)?
-            .parse()
-            .map_err(ParseMachineError::Prize)?;
-        if lines.next().is_some() {
-            return Err(ParseMachineError::ExtraLines);
-        };
-        Ok(Machine {
-            button_a,
-            button_b,
-            prize,
-        })
-    }
-}
-
+#[derive(FromStr)]
+#[display("{x}, {y}")]
 struct Button {
-    _name: String,
+    #[display("X+{}")]
     x: i64,
+    #[display("Y+{}")]
     y: i64,
 }
 
-#[derive(Debug)]
-struct ParseButtonError;
-
-impl FromStr for Button {
-    type Err = ParseButtonError;
-    fn from_str(s: &str) -> Result<Self, Self::Err> {
-        let (name, s) = s
-            .strip_prefix("Button ")
-            .and_then(|s| s.split_once(':'))
-            .ok_or(ParseButtonError)?;
-        let name = name.to_string();
-        let (x, y) = s.split_once(',').ok_or(ParseButtonError)?;
-        let x = x
-            .strip_prefix(" X+")
-            .ok_or(ParseButtonError)?
-            .parse()
-            .map_err(|_| ParseButtonError)?;
-        let y = y
-            .strip_prefix(" Y+")
-            .ok_or(ParseButtonError)?
-            .parse()
-            .map_err(|_| ParseButtonError)?;
-        Ok(Button { _name: name, x, y })
-    }
-}
-
+#[derive(FromStr)]
+#[display("{x}, {y}")]
 struct Prize {
+    #[display("X={}")]
     x: i64,
+    #[display("Y={}")]
     y: i64,
 }
 
-#[derive(Debug)]
-struct ParsePrizeError;
-
-impl FromStr for Prize {
-    type Err = ParsePrizeError;
-    fn from_str(s: &str) -> Result<Self, Self::Err> {
-        let (x, y) = s
-            .strip_prefix("Prize:")
-            .and_then(|s| s.split_once(','))
-            .ok_or(ParsePrizeError)?;
-        let x = x
-            .strip_prefix(" X=")
-            .ok_or(ParsePrizeError)?
-            .parse()
-            .map_err(|_| ParsePrizeError)?;
-        let y = y
-            .strip_prefix(" Y=")
-            .ok_or(ParsePrizeError)?
-            .parse()
-            .map_err(|_| ParsePrizeError)?;
-        Ok(Prize { x, y })
-    }
-}
-
-struct Input(Vec<Machine>);
-
-impl FromStr for Input {
-    type Err = ParseMachineError;
-
-    fn from_str(s: &str) -> Result<Self, Self::Err> {
-        Ok(Input(
-            s.split("\n\n")
-                .map(|s| s.parse::<Machine>())
-                .collect::<Result<_, _>>()?,
-        ))
-    }
-}
+#[derive(FromStr, Deref)]
+struct Input(#[display(with=delimiter("\n\n"))] Vec<Machine>);
 
 impl Input {
     fn tokens(&self) -> i64 {
-        self.0
-            .iter()
+        self.iter()
             .map(|m: &Machine| m.min_tokens().unwrap_or(0))
             .sum()
     }

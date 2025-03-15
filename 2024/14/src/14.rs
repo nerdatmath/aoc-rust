@@ -1,4 +1,5 @@
 use orthant::Orthant;
+use parse_display::FromStr;
 use std::{cmp::Ordering, fmt::Debug, marker::PhantomData, str::FromStr};
 
 use itertools::Itertools;
@@ -17,31 +18,13 @@ mod coord;
 
 mod orthant;
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, FromStr)]
+#[display("{p} {v}")]
 struct Robot<Coord> {
+    #[display("p={}")]
     p: Coord,
+    #[display("v={}")]
     v: Coord,
-}
-
-#[derive(Debug)]
-struct ParseRobotError;
-
-impl<Coord: FromStr> FromStr for Robot<Coord> {
-    type Err = ParseRobotError;
-
-    fn from_str(s: &str) -> Result<Self, Self::Err> {
-        let (p, v) = s.split_once(' ').ok_or(ParseRobotError)?;
-        Ok(Self {
-            p: p.strip_prefix("p=")
-                .ok_or(ParseRobotError)?
-                .parse()
-                .map_err(|_| ParseRobotError)?,
-            v: v.strip_prefix("v=")
-                .ok_or(ParseRobotError)?
-                .parse()
-                .map_err(|_| ParseRobotError)?,
-        })
-    }
 }
 
 trait Runnable {

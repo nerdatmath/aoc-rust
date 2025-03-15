@@ -1,101 +1,97 @@
-use std::iter::{repeat, zip};
+use game_grid::{Grid, GridPosition};
+use itertools::iproduct;
 
-use array2d::{self, Array2D};
-
-fn parse(input: &str) -> Array2D<char> {
-    let rows: Vec<Vec<char>> = input.lines().map(|s| s.chars().collect()).collect();
-    Array2D::from_rows(&rows).unwrap()
+fn parse(input: &str) -> Grid<char> {
+    input.parse().unwrap()
 }
 
-fn is_xmas(iter: &mut dyn Iterator<Item = (usize, usize)>, array: &Array2D<char>) -> bool {
-    iter.take(4)
-        .map(|(row, column)| array.get(row, column).unwrap().clone())
-        .collect::<String>()
-        == "XMAS"
+// A 2D point struct deriving GridPosition.
+#[derive(GridPosition, PartialEq, Eq, Debug, Clone, Copy)]
+struct Pos {
+    x: i32,
+    y: i32,
 }
 
-fn part1(input: &str) -> usize {
-    let array = parse(input);
-    let mut count = 0usize;
-    for row in 0..array.num_rows() {
-        for column in 0..array.num_columns() {
-            let iters: [&mut dyn Iterator<Item = (usize, usize)>; 8] = [
-                &mut zip(repeat(row), column..array.num_columns()),
-                &mut zip((0..=row).rev(), column..array.num_columns()),
-                &mut zip((0..=row).rev(), repeat(column)),
-                &mut zip((0..=row).rev(), (0..=column).rev()),
-                &mut zip(repeat(row), (0..=column).rev()),
-                &mut zip(row..array.num_rows(), (0..=column).rev()),
-                &mut zip(row..array.num_rows(), repeat(column)),
-                &mut zip(row..array.num_rows(), column..array.num_columns()),
-            ];
-            for iter in iters {
-                if is_xmas(iter, &array) {
-                    count += 1;
-                }
-            }
+impl std::ops::Add<(i32, i32)> for Pos {
+    type Output = Self;
+
+    fn add(self, (dx, dy): (i32, i32)) -> Self::Output {
+        Self::Output {
+            x: self.x + dx,
+            y: self.y + dy,
         }
     }
-    count
 }
 
-fn is_x_mas(row: usize, column: usize, array: &Array2D<char>) -> bool {
-    row != 0
-        && column != 0
-        && match array.get(row, column) {
-            Some('A') => true,
-            _ => false,
-        }
-        && match (
-            array.get(row - 1, column - 1),
-            array.get(row + 1, column + 1),
-        ) {
-            (Some('M'), Some('S')) => true,
-            (Some('S'), Some('M')) => true,
-            _ => return false,
-        }
-        && match (
-            array.get(row + 1, column - 1),
-            array.get(row - 1, column + 1),
-        ) {
-            (Some('M'), Some('S')) => true,
-            (Some('S'), Some('M')) => true,
-            _ => return false,
-        }
-}
-
-fn part2(input: &str) -> usize {
-    let array = parse(input);
-    let mut count = 0usize;
-    for row in 0..array.num_rows() {
-        for column in 0..array.num_columns() {
-            if is_x_mas(row, column, &array) {
-                count += 1;
-            }
-        }
+trait Part {
+    fn xmas_count_at(grid: &Grid<char>, pos: Pos) -> usize;
+    fn xmas_count(grid: &Grid<char>) -> usize {
+        (0..grid.len())
+            .map(|i| Self::xmas_count_at(grid, grid.position_for_index::<Pos>(i)))
+            .sum()
     }
-    count
+    fn run(input: &str) -> usize {
+        let grid: Grid<char> = parse(input);
+        Self::xmas_count(&grid)
+    }
+}
+
+struct PartN<const N: u8>;
+type Part1 = PartN<1>;
+type Part2 = PartN<2>;
+
+fn get_directional(grid: &Grid<char>, pos: Pos, dx: i32, dy: i32) -> impl Iterator<Item = char> {
+    itertools::iterate(pos, move |&pos| pos + (dx, dy))
+        .take_while(|&pos| grid.is_in_bounds(pos))
+        .map(|pos| grid[pos])
+}
+
+fn match_string(grid: &Grid<char>, pos: Pos, dx: i32, dy: i32, s: &str) -> bool {
+    get_directional(grid, pos, dx, dy)
+        .take(s.len())
+        .eq(s.chars())
+}
+
+impl Part for Part1 {
+    fn xmas_count_at(grid: &Grid<char>, pos: Pos) -> usize {
+        iproduct!(-1..=1, -1..=1)
+            .filter(|&(dx, dy)| match_string(grid, pos, dx, dy, "XMAS"))
+            .count()
+    }
+}
+
+impl Part for Part2 {
+    fn xmas_count_at(grid: &Grid<char>, pos: Pos) -> usize {
+        [(1, 1), (1, -1)]
+            .into_iter()
+            .all(|(dx, dy)| {
+                [(-dx, -dy), (dx, dy)]
+                    .into_iter()
+                    .any(|(dx, dy)| match_string(grid, pos + (-dx, -dy), dx, dy, "MAS"))
+            })
+            .into()
+    }
 }
 
 #[cfg(test)]
 mod tests {
-    use super::{part1, part2};
+    use super::{Part, Part1, Part2};
 
     const EXAMPLE: &'static str = include_str!("../data/example/input");
 
     #[test]
     fn test_part1() {
-        assert_eq!(part1(EXAMPLE), 18);
+        assert_eq!(Part1::run(EXAMPLE), 18);
     }
 
     #[test]
     fn test_part2() {
-        assert_eq!(part2(EXAMPLE), 9);
+        assert_eq!(Part2::run(EXAMPLE), 9);
     }
 }
 
 fn main() {
     let input = include_str!("../data/actual/input");
-    println!("Part 1: {}", part1(input));
-    println!("Part 2: {}", part2(input));
+    println!("Part 1: {}", Part1::run(input));
+    println!("Part 2: {}", Part2::run(input));
 }

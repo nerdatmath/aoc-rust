@@ -9,39 +9,62 @@ enum Instruction {
     Dont,
 }
 
-struct State {
-    sum: Num,
-    enabled: bool,
-    part1: bool,
+trait Part
+where
+    Self: Sized,
+{
+    fn new() -> Self;
+    fn value(&mut self, i: Instruction) -> Option<Num>;
+    fn run(instructions: impl IntoIterator<Item = Instruction>) -> Num {
+        let mut this = Self::new();
+        instructions.into_iter().filter_map(|i| this.value(i)).sum()
+    }
 }
 
-impl State {
-    fn new(part1: bool) -> Self {
-        State {
-            sum: 0,
-            enabled: true,
-            part1,
+struct Part1;
+
+impl Part for Part1 {
+    fn new() -> Self {
+        return Self {};
+    }
+    fn value(&mut self, i: Instruction) -> Option<Num> {
+        if let Instruction::Mul(x, y) = i {
+            Some(x * y)
+        } else {
+            None
         }
     }
 }
 
-fn run(mut state: State, instruction: &Instruction) -> State {
-    match instruction {
-        Instruction::Mul(x, y) if state.enabled => state.sum += x * y,
-        Instruction::Mul(_, _) => (),
-        Instruction::Do => state.enabled = true,
-        Instruction::Dont if !state.part1 => state.enabled = false,
-        Instruction::Dont => (),
+struct Part2 {
+    part1: Part1,
+    enabled: bool,
+}
+
+impl Part for Part2 {
+    fn new() -> Self {
+        Self {
+            part1: Part1 {},
+            enabled: true,
+        }
     }
-    state
+    fn value(&mut self, i: Instruction) -> Option<Num> {
+        match i {
+            Instruction::Do => self.enabled = true,
+            Instruction::Dont => self.enabled = false,
+            _ if self.enabled => return self.part1.value(i),
+            _ => (),
+        }
+        return None;
+    }
 }
 
 fn part1(input: &str) -> Num {
-    parse::parse(input).iter().fold(State::new(true), run).sum
+    Part1::run(parse::parse(input))
 }
 
 fn part2(input: &str) -> Num {
-    parse::parse(input).iter().fold(State::new(false), run).sum
+    Part2::run(parse::parse(input))
 }
 
 #[cfg(test)]

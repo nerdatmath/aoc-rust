@@ -1,28 +1,12 @@
-use std::{
-    ops::{AddAssign, SubAssign},
-    str::FromStr,
-};
+use std::ops::{AddAssign, SubAssign};
 
 use crate::orthant::Orthant;
 
-#[derive(Clone, Copy, Debug)]
+#[derive(Clone, Copy, Debug, parse_display::FromStr)]
+#[display("{col},{row}")]
 pub struct Coord<Row, Col> {
     pub row: Row,
     pub col: Col,
-}
-
-pub struct ParseCoordError;
-
-impl<Row: FromStr, Col: FromStr> FromStr for Coord<Row, Col> {
-    type Err = ParseCoordError;
-
-    fn from_str(s: &str) -> Result<Self, Self::Err> {
-        let (col, row) = s.split_once(',').ok_or(ParseCoordError)?;
-        Ok(Self {
-            row: row.parse().map_err(|_| ParseCoordError)?,
-            col: col.parse().map_err(|_| ParseCoordError)?,
-        })
-    }
 }
 
 macro_rules! coord_op_assign {

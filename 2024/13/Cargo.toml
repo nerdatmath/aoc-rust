@@ -8,4 +8,7 @@ name = "y2024d13"
 path = "src/13.rs"
 
 [dependencies]
-num = "0.4.3"
+derive_more = { workspace = true, features = ["deref"] }
+num = { workspace = true }
+parse-display.workspace = true
+parse-display-with.workspace = true

@@ -1,15 +1,10 @@
 use bag::Bag;
+use derive_more::Deref;
+use parse_display::FromStr;
+use parse_display_with::formats::delimiter;
 
-#[derive(PartialEq, Eq, Hash)]
+#[derive(PartialEq, Eq, Hash, FromStr)]
 struct Stone(usize);
-
-impl std::str::FromStr for Stone {
-    type Err = <usize as std::str::FromStr>::Err;
-
-    fn from_str(s: &str) -> Result<Self, Self::Err> {
-        Ok(Stone(s.parse()?))
-    }
-}
 
 impl Stone {
     fn blink(&self) -> impl Iterator<Item = Stone> + use<> {
@@ -26,62 +21,20 @@ impl Stone {
     }
 }
 
-struct Stones(Bag<Stone>);
-
-impl std::str::FromStr for Stones {
-    type Err = <Stone as std::str::FromStr>::Err;
-
-    fn from_str(s: &str) -> Result<Self, Self::Err> {
-        Ok(s.split_ascii_whitespace()
-            .map(|s| s.parse::<Stone>())
-            .collect::<Result<Stones, _>>()?)
-    }
-}
+#[derive(FromStr, Deref)]
+struct Stones(#[display(with=delimiter::<Stone>(" "))] Bag<Stone>);
 
 impl Stones {
-    fn iter(&self) -> bag::Iter<Stone> {
-        self.0.iter()
-    }
-
     fn blink(&self) -> Self {
         self.iter()
             .flat_map(|(stone, &count)| stone.blink().map(move |stone| (stone, count)))
             .collect()
-    }
-
-    fn count(&self) -> usize {
-        self.0.count()
-    }
-}
-
-impl IntoIterator for Stones {
-    type Item = (Stone, usize);
-    type IntoIter = bag::IntoIter<Stone>;
-
-    fn into_iter(self) -> Self::IntoIter {
-        self.0.into_iter()
-    }
-}
-
-impl FromIterator<Stone> for Stones {
-    fn from_iter<T: IntoIterator<Item = Stone>>(iter: T) -> Self {
-        Stones(iter.into_iter().collect())
     }
 }
 
 impl FromIterator<(Stone, usize)> for Stones {
     fn from_iter<T: IntoIterator<Item = (Stone, usize)>>(iter: T) -> Self {
         Stones(iter.into_iter().collect())
-    }
-}
-
-impl FromIterator<Stones> for Stones {
-    fn from_iter<T: IntoIterator<Item = Stones>>(iter: T) -> Self {
-        Stones(
-            iter.into_iter()
-                .flat_map(|stones| stones.into_iter())
-                .collect(),
-        )
     }
 }
 

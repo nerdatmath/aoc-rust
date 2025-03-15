@@ -1,18 +1,13 @@
 use std::collections::HashSet;
 
+use derive_more::From;
 use direction::{CardinalDirection, CardinalDirectionIter};
 use disjoint_hash_set::DisjointHashSet;
 use grid::Grid;
 use itertools::Itertools;
 
-#[derive(Clone, Copy, PartialEq, Eq, Debug)]
+#[derive(Clone, Copy, PartialEq, Eq, Debug, From)]
 struct PlantType(char);
-
-impl From<char> for PlantType {
-    fn from(value: char) -> Self {
-        Self(value)
-    }
-}
 
 #[derive(Debug)]
 struct Region {
@@ -116,12 +111,8 @@ impl std::str::FromStr for Map {
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         Ok(Map(s
             .lines()
-            .map(|line| {
-                line.chars()
-                    .map(PlantType::try_from)
-                    .collect::<Result<_, _>>()
-            })
-            .collect::<Result<Vec<_>, _>>()?
+            .map(|line| line.chars().map(PlantType::from).collect())
+            .collect::<Vec<_>>()
             .into()))
     }
 }

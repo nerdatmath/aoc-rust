@@ -3,26 +3,22 @@ use std::{
     iter::{from_fn, zip},
 };
 
-fn to_pair<T: Clone>(iter: impl Iterator<Item = T>) -> (T, T) {
-    let v: Vec<T> = iter.collect();
-    assert!(v.len() == 2);
-    (v[0].clone(), v[1].clone())
-}
+use itertools::Itertools;
 
 fn generate(input: &str) -> impl Iterator<Item = (u32, u32)> {
     input.lines().map(|s| {
-        to_pair(
-            s.split_ascii_whitespace()
-                .map(|s| s.parse::<u32>().unwrap()),
-        )
+        s.split_ascii_whitespace()
+            .map(|s| s.parse::<u32>().unwrap())
+            .collect_tuple()
+            .unwrap()
     })
 }
 
 fn part1(input: &str) -> u32 {
     let (mut a, mut b): (BinaryHeap<_>, BinaryHeap<_>) = generate(input).collect();
     zip(from_fn(|| a.pop()), from_fn(|| b.pop()))
-        .map(|pair| pair.0.abs_diff(pair.1))
-        .sum::<u32>()
+        .map(|(a, b)| a.abs_diff(b))
+        .sum()
 }
 
 fn part2(input: &str) -> usize {

@@ -1,4 +1,5 @@
 use num_traits::Euclid;
+use parse_display::FromStr;
 
 pub trait Modular
 where
@@ -8,22 +9,13 @@ where
     const MODULUS: Self::Scalar;
 }
 
-#[derive(Clone, Copy, Debug)]
+#[derive(Clone, Copy, Debug, FromStr)]
+#[from_str(new = <Self as From<isize>>::from(_0))]
 pub struct Mod<const M: u8>(u8);
 
 impl<const M: u8> Modular for Mod<M> {
     type Scalar = u8;
     const MODULUS: Self::Scalar = M;
-}
-
-impl<const M: u8> std::str::FromStr for Mod<M> {
-    type Err = ParseModularError;
-
-    fn from_str(s: &str) -> Result<Self, Self::Err> {
-        s.parse::<isize>()
-            .map_err(|_| ParseModularError)
-            .map(|s| s.into())
-    }
 }
 
 impl<T, const M: u8> From<T> for Mod<M>
@@ -74,5 +66,3 @@ impl<const M: u8> std::ops::Mul<u8> for Mod<M> {
         Self(u8::try_from((u16::from(self.0) * u16::from(rhs)).rem_euclid(u16::from(M))).unwrap())
     }
 }
-
-pub struct ParseModularError;

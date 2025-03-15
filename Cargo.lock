@@ -3,6 +3,15 @@
 version = 4
 
 [[package]]
+name = "aho-corasick"
+version = "1.1.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "8e60d3430d3a69478ad0993f19238d2df97c507009a52b3c10addcd7f6bcb916"
+dependencies = [
+ "memchr",
+]
+
+[[package]]
 name = "array2d"
 version = "0.3.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -23,6 +32,26 @@ name = "coord_2d"
 version = "0.3.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "f1020a2ed8bf43fc850b01db7570c0e4194d3e3d8d806a5f1857d2ab15feec57"
+
+[[package]]
+name = "derive_more"
+version = "2.0.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "093242cf7570c207c83073cf82f79706fe7b8317e98620a47d5be7c3d8497678"
+dependencies = [
+ "derive_more-impl",
+]
+
+[[package]]
+name = "derive_more-impl"
+version = "2.0.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "bda628edc44c4bb645fbe0f758797143e4e07926f7ebf4e9bdfbd3d2ce621df3"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn 2.0.100",
+]
 
 [[package]]
 name = "direction"
@@ -64,7 +93,7 @@ dependencies = [
  "proc-macro-error",
  "proc-macro2",
  "quote",
- "syn",
+ "syn 1.0.109",
 ]
 
 [[package]]
@@ -76,7 +105,7 @@ dependencies = [
  "proc-macro-error",
  "proc-macro2",
  "quote",
- "syn",
+ "syn 1.0.109",
 ]
 
 [[package]]
@@ -183,6 +212,40 @@ dependencies = [
 ]
 
 [[package]]
+name = "parse-display"
+version = "0.10.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "287d8d3ebdce117b8539f59411e4ed9ec226e0a4153c7f55495c6070d68e6f72"
+dependencies = [
+ "parse-display-derive",
+ "regex",
+ "regex-syntax",
+]
+
+[[package]]
+name = "parse-display-derive"
+version = "0.10.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "7fc048687be30d79502dea2f623d052f3a074012c6eac41726b7ab17213616b1"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "regex",
+ "regex-syntax",
+ "structmeta",
+ "syn 2.0.100",
+]
+
+[[package]]
+name = "parse-display-with"
+version = "0.0.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "7fa97514a1b0f21f619da5abf2e0b944dbb9e825a31dda9a2a3eb806afe4a751"
+dependencies = [
+ "parse-display",
+]
+
+[[package]]
 name = "point"
 version = "0.1.0"
 
@@ -195,7 +258,7 @@ dependencies = [
  "proc-macro-error-attr",
  "proc-macro2",
  "quote",
- "syn",
+ "syn 1.0.109",
  "version_check",
 ]
 
@@ -229,10 +292,73 @@ dependencies = [
 ]
 
 [[package]]
+name = "regex"
+version = "1.11.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "b544ef1b4eac5dc2db33ea63606ae9ffcfac26c1416a2806ae0bf5f56b201191"
+dependencies = [
+ "aho-corasick",
+ "memchr",
+ "regex-automata",
+ "regex-syntax",
+]
+
+[[package]]
+name = "regex-automata"
+version = "0.4.9"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "809e8dc61f6de73b46c85f4c96486310fe304c434cfa43669d7b40f711150908"
+dependencies = [
+ "aho-corasick",
+ "memchr",
+ "regex-syntax",
+]
+
+[[package]]
+name = "regex-syntax"
+version = "0.8.5"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "2b15c43186be67a4fd63bee50d0303afffcef381492ebe2c5d87f324e1b8815c"
+
+[[package]]
+name = "structmeta"
+version = "0.3.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "2e1575d8d40908d70f6fd05537266b90ae71b15dbbe7a8b7dffa2b759306d329"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "structmeta-derive",
+ "syn 2.0.100",
+]
+
+[[package]]
+name = "structmeta-derive"
+version = "0.3.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "152a0b65a590ff6c3da95cabe2353ee04e6167c896b28e3b14478c2636c922fc"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn 2.0.100",
+]
+
+[[package]]
 name = "syn"
 version = "1.0.109"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "72b64191b275b66ffe2469e8af2c1cfe3bafa67b529ead792a6d0160888b4237"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "unicode-ident",
+]
+
+[[package]]
+name = "syn"
+version = "2.0.100"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "b09a44accad81e1ba1cd74a32461ba89dee89095ba17b32f5d03683b1b1fc2a0"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -254,6 +380,9 @@ checksum = "0b928f33d975fc6ad9f86c8f283853ad26bdd5b10b7f1542aa2fa15e2289105a"
 [[package]]
 name = "y2024d01"
 version = "0.1.0"
+dependencies = [
+ "itertools",
+]
 
 [[package]]
 name = "y2024d02"
@@ -270,12 +399,18 @@ dependencies = [
 name = "y2024d04"
 version = "0.1.0"
 dependencies = [
- "array2d",
+ "game-grid",
+ "itertools",
 ]
 
 [[package]]
 name = "y2024d05"
 version = "0.1.0"
+dependencies = [
+ "derive_more",
+ "parse-display",
+ "parse-display-with",
+]
 
 [[package]]
 name = "y2024d06"
@@ -289,6 +424,8 @@ name = "y2024d07"
 version = "0.1.0"
 dependencies = [
  "num",
+ "parse-display",
+ "parse-display-with",
 ]
 
 [[package]]
@@ -311,12 +448,16 @@ name = "y2024d11"
 version = "0.1.0"
 dependencies = [
  "bag",
+ "derive_more",
+ "parse-display",
+ "parse-display-with",
 ]
 
 [[package]]
 name = "y2024d12"
 version = "0.1.0"
 dependencies = [
+ "derive_more",
  "direction",
  "disjoint-hash-set",
  "grid",
@@ -327,7 +468,10 @@ dependencies = [
 name = "y2024d13"
 version = "0.1.0"
 dependencies = [
+ "derive_more",
  "num",
+ "parse-display",
+ "parse-display-with",
 ]
 
 [[package]]
@@ -337,11 +481,16 @@ dependencies = [
  "grid",
  "itertools",
  "num-traits",
+ "parse-display",
+ "parse-display-with",
 ]
 
 [[package]]
 name = "y2024d15"
 version = "0.1.0"
 dependencies = [
+ "derive_more",
  "game-grid",
+ "parse-display",
+ "parse-display-with",
 ]

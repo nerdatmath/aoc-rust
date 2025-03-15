@@ -6,3 +6,8 @@ edition = "2024"
 [[bin]]
 name = "y2024d05"
 path = "src/05.rs"
+
+[dependencies]
+derive_more = { workspace = true, features = ["deref", "deref_mut"] }
+parse-display = { workspace = true }
+parse-display-with = { workspace = true }

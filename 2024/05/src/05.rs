@@ -1,51 +1,39 @@
 use std::{cmp::Ordering, collections::HashSet};
 
-type Page = u32;
+use derive_more::{Deref, DerefMut};
+use parse_display::{Display, FromStr};
+use parse_display_with::formats::delimiter;
 
-#[derive(Hash, PartialEq, Eq)]
+#[derive(Clone, Copy, Deref, Display, FromStr, Hash, PartialEq, Eq)]
+struct Page(u32);
+
+#[derive(Clone, Copy, Hash, PartialEq, Eq, Display, FromStr)]
+#[display("{before}|{after}")]
 struct Rule {
     before: Page,
     after: Page,
 }
 
-type Update = Vec<Page>;
+#[derive(Clone, DerefMut, Deref, Display, FromStr)]
+struct Update(#[display(with = delimiter(","))] Vec<Page>);
 
-fn middle(update: &Update) -> Page {
-    update[update.len() / 2]
-}
-
-fn parse_rule(input: &str) -> Rule {
-    let (before_str, after_str) = input
-        .split_once("|")
-        .expect("A rule must contain a '|' character.");
-    Rule {
-        before: before_str
-            .parse()
-            .expect("A rule must start with a page number."),
-        after: after_str
-            .parse()
-            .expect("A rule must end with a page number."),
+impl Update {
+    fn middle(&self) -> Page {
+        self[self.len() / 2]
     }
 }
 
-fn parse_update(input: &str) -> Update {
-    input
-        .split(",")
-        .map(|s| {
-            s.parse()
-                .expect("An update must contain page numbers separated by ','.")
-        })
-        .collect()
-}
+#[derive(Clone, DerefMut, Deref, Display, FromStr)]
+struct Rules(#[display(with=delimiter("\n"))] HashSet<Rule>);
 
-fn rules_comparer<'a>(rules: &'a HashSet<Rule>) -> impl Fn(&Page, &Page) -> Ordering + 'a{
-    |&a, &b| {
-        if rules.contains(&Rule {
+impl Rules {
+    fn cmp(&self, &a: &Page, &b: &Page) -> Ordering {
+        if self.contains(&Rule {
             before: a,
             after: b,
         }) {
             Ordering::Less
-        } else if rules.contains(&Rule {
+        } else if self.contains(&Rule {
             before: b,
             after: a,
         }) {
@@ -56,38 +44,39 @@ fn rules_comparer<'a>(rules: &'a HashSet<Rule>) -> impl Fn(&Page, &Page) -> Orde
     }
 }
 
-fn parse(input: &str) -> (HashSet<Rule>, Vec<Update>) {
-    let (rules_str, updates_str) = input
-        .split_once("\n\n")
-        .expect("Input must contain rules and updates, separated by an empty line.");
-    (
-        rules_str.lines().map(parse_rule).collect(),
-        updates_str.lines().map(parse_update).collect(),
-    )
+#[derive(Clone, DerefMut, Deref, Display, FromStr)]
+struct Updates(#[display(with=delimiter("\n"))] Vec<Update>);
+
+#[derive(Display, FromStr)]
+#[display("{rules}\n\n{updates}")]
+struct Puzzle {
+    rules: Rules,
+    updates: Updates,
 }
 
-fn part1(input: &str) -> Page {
-    let (rules, updates) = parse(input);
-    let compare = rules_comparer(&rules);
-    updates
+fn part1(input: &str) -> u32 {
+    let puzzle: Puzzle = input.parse().expect("Parse failed.");
+    let p = |u: &&Update| u.is_sorted_by(|a, b| puzzle.rules.cmp(a, b).is_lt());
+    puzzle.updates.iter().filter(p).map(|u| *u.middle()).sum()
+}
+
+fn part2(input: &str) -> u32 {
+    let puzzle: Puzzle = input.parse().expect("Parse failed.");
+    let p = |u: &&Update| !u.is_sorted_by(|a, b| puzzle.rules.cmp(a, b).is_lt());
+    let sortit = |u: &Update| {
+        let mut u = u.clone();
+        u.sort_by(|a, b| puzzle.rules.cmp(a, b));
+        u
+    };
+    puzzle
+        .updates
         .iter()
-        .filter(|pages| pages.is_sorted_by(|a, b| compare(a, b).is_lt()))
-        .map(middle)
-        .sum::<Page>()
+        .filter(p)
+        .map(sortit)
+        .map(|u| *u.middle())
+        .sum::<u32>()
 }
 
-fn part2(input: &str) -> Page {
-    let (rules, mut updates) = parse(input);
-    let compare = rules_comparer(&rules);
-    updates
-        .iter_mut()
-        .filter(|pages| !pages.is_sorted_by(|a, b| compare(a, b).is_lt()))
-        .map(|pages| {
-            pages.sort_by(&compare);
-            middle(&pages)
-        })
-        .sum::<Page>()
-}
 #[cfg(test)]
 mod tests {
     use super::{part1, part2};

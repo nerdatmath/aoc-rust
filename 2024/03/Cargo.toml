@@ -8,4 +8,4 @@ name = "y2024d03"
 path = "src/03.rs"
 
 [dependencies]
-nom = "8.0.0"
+nom = { workspace = true }

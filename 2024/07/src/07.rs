@@ -1,6 +1,8 @@
-use std::{fmt::Debug, iter::Sum, str::FromStr};
+use std::{fmt::Debug, iter::Sum};
 
 use num::Zero;
+use parse_display::{Display, FromStr};
+use parse_display_with::formats::delimiter;
 
 trait Part1Num
 where
@@ -57,46 +59,13 @@ trait Part2Num: Part1Num {
     }
 }
 
+#[derive(Display, FromStr)]
+#[display("{answer}: {start} {operands}")]
 struct Equation<T> {
     answer: T,
     start: T,
+    #[display(with=delimiter(" "))]
     operands: Vec<T>,
-}
-
-#[derive(Debug, Clone, PartialEq, Eq)]
-enum ParsingErr<T>
-where
-    T: FromStr,
-    <T as FromStr>::Err: Debug,
-{
-    MissingColon,
-    Answer(T::Err),
-    Operand(T::Err),
-    EmptyOperands,
-}
-
-impl<T> FromStr for Equation<T>
-where
-    T: FromStr,
-    <T as FromStr>::Err: Debug,
-{
-    type Err = ParsingErr<T>;
-
-    fn from_str(s: &str) -> Result<Self, Self::Err> {
-        let (item, s) = s.split_once(": ").ok_or(Self::Err::MissingColon)?;
-        let answer: T = item.parse().map_err(Self::Err::Answer)?;
-        let (item, s) = s.split_once(" ").ok_or(Self::Err::EmptyOperands)?;
-        let start: T = item.parse().map_err(Self::Err::Operand)?;
-        let operands: Vec<T> = s
-            .split(" ")
-            .map(|s| s.parse::<T>().map_err(Self::Err::Operand))
-            .collect::<Result<_, _>>()?;
-        Ok(Self {
-            answer,
-            start,
-            operands,
-        })
-    }
 }
 
 impl<T> Equation<T> {

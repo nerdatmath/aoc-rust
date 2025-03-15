@@ -6,3 +6,6 @@ edition = "2024"
 [[bin]]
 name = "y2024d01"
 path = "src/01.rs"
+
+[dependencies]
+itertools = { workspace = true }
