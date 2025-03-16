@@ -8,4 +8,7 @@ name = "y2024d06"
 path = "src/06.rs"
 
 [dependencies]
-array2d = "0.3.2"
+derive_more = { workspace = true, features = ["deref", "deref_mut", "from_str"] }
+direction.workspace = true
+game-grid.workspace = true
+position.workspace = true

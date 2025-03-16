@@ -1,69 +1,8 @@
-use derive_more::TryFrom;
+use direction::Direction as Dir;
 use game_grid::*;
 use parse_display::FromStr;
+use position::Position as Pos;
 use std::collections::HashSet;
-
-#[derive(Copy, Clone, Debug, PartialEq, Eq, TryFrom, FromStr)]
-#[try_from(repr)]
-#[repr(u8)]
-enum Dir {
-    #[display("^")]
-    N = b'^',
-    #[display("v")]
-    S = b'v',
-    #[display(">")]
-    E = b'>',
-    #[display("<")]
-    W = b'<',
-}
-
-impl Dir {
-    fn is_vertical(&self) -> bool {
-        *self == Dir::N || *self == Dir::S
-    }
-}
-
-#[derive(Debug)]
-struct ParseDirError;
-
-impl TryFrom<char> for Dir {
-    type Error = ParseDirError;
-
-    fn try_from(ch: char) -> Result<Self, Self::Error> {
-        Ok(Self::try_from(u8::try_from(ch).map_err(|_| ParseDirError)?)
-            .map_err(|_| ParseDirError)?)
-    }
-}
-
-#[derive(GridPosition, Clone, Copy, Debug, PartialEq, Eq, Hash)]
-struct Pos {
-    x: i32,
-    y: i32,
-}
-
-impl Pos {
-    fn next(&self, i: Dir) -> Self {
-        (|| match i {
-            Dir::N => Some(Pos {
-                y: self.y - 1,
-                ..*self
-            }),
-            Dir::S => Some(Pos {
-                y: self.y + 1,
-                ..*self
-            }),
-            Dir::E => Some(Pos {
-                x: self.x + 1,
-                ..*self
-            }),
-            Dir::W => Some(Pos {
-                x: self.x - 1,
-                ..*self
-            }),
-        })()
-        .unwrap()
-    }
-}
 
 #[derive(GridCell, Copy, Clone, Debug, PartialEq, Eq, Default)]
 enum Cell {
@@ -92,7 +31,7 @@ impl Map {
         }
         let mut newpos: HashSet<Pos> = pos
             .iter()
-            .map(|pos| pos.next(dir))
+            .map(|pos| pos + dir)
             .filter(|&pos| self.0[pos] != Cell::Empty)
             .collect();
         if newpos.iter().any(|&pos| self.0[pos] == Cell::Wall) {
@@ -104,8 +43,8 @@ impl Map {
                 .flat_map(|pos| match self.0[pos] {
                     Cell::Wall | Cell::Empty => panic!("Can't be!"),
                     Cell::Box | Cell::Robot => vec![pos],
-                    Cell::LBox => vec![pos, pos.next(Dir::E)],
-                    Cell::RBox => vec![pos.next(Dir::W), pos],
+                    Cell::LBox => vec![pos, pos + Dir::E],
+                    Cell::RBox => vec![pos + Dir::W, pos],
                 })
                 .collect();
         }
@@ -113,7 +52,7 @@ impl Map {
             return false;
         }
         for pos in pos {
-            let newpos = pos.next(dir);
+            let newpos = pos + dir;
             assert_eq!(self.0[newpos], Cell::Empty);
             self.0.set_cell(newpos, self.0[pos]);
             self.0.set_cell(pos, Cell::Empty);
@@ -143,7 +82,7 @@ struct Puzzle {
 struct ParseDirections;
 
 impl parse_display::FromStrFormat<Vec<Dir>> for ParseDirections {
-    type Err = ParseDirError;
+    type Err = direction::ParseDirError;
     fn parse(&self, s: &str) -> core::result::Result<Vec<Dir>, Self::Err> {
         s.chars()
             .filter_map(|ch| (ch != '\n').then(|| Dir::try_from(ch)))
@@ -162,7 +101,7 @@ impl Puzzle {
             .0;
         for &dir in &self.directions {
             if self.map.push(HashSet::from([robot]), dir) {
-                robot = robot.next(dir);
+                robot += dir;
             }
         }
         self.map.result()

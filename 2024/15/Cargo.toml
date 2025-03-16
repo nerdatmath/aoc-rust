@@ -8,3 +8,5 @@ derive_more = { workspace = true, features = ["try_from"] }
 game-grid.workspace = true
 parse-display.workspace = true
 parse-display-with.workspace = true
+direction.workspace = true
+position.workspace = true

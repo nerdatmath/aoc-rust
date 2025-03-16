@@ -1,152 +1,136 @@
 use std::collections::HashSet;
 
-use array2d::{self, Array2D};
+use derive_more::{Deref, DerefMut, FromStr};
+use direction::Direction;
+use game_grid::Grid;
+use position::Position;
 
-trait Mappy {
-    fn in_bounds(&self, row: usize, col: usize) -> bool;
-    fn blocked(&self, row: usize, col: usize) -> bool;
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Default)]
+enum Cell {
+    #[default]
+    Empty,
+    Wall,
+    Guard(Direction),
 }
 
-type Map = Array2D<char>;
+#[derive(Debug)]
+struct ParseCellError;
 
-impl Mappy for Map {
-    fn in_bounds(&self, row: usize, col: usize) -> bool {
-        self.get(row, col).is_some()
-    }
+impl TryFrom<char> for Cell {
+    type Error = ParseCellError;
 
-    fn blocked(&self, row: usize, col: usize) -> bool {
-        self.get(row, col) == Some(&'#')
-    }
-}
-
-fn parse(input: &str) -> Map {
-    let rows: Vec<Vec<char>> = input.lines().map(|s| s.chars().collect()).collect();
-    Array2D::from_rows(&rows).unwrap()
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
-enum Direction {
-    N,
-    S,
-    E,
-    W,
-}
-
-#[derive(Hash, PartialEq, Eq, Clone)]
-struct GuardState {
-    pos: (usize, usize),
-    dir: Direction,
-}
-
-struct ErrOutOfBounds;
-
-impl GuardState {
-    fn new(map: &Map) -> GuardState {
-        for (i, row) in map.rows_iter().enumerate() {
-            for (j, ch) in row.enumerate() {
-                return GuardState {
-                    pos: (i, j),
-                    dir: match ch {
-                        '^' => Direction::N,
-                        '>' => Direction::E,
-                        'v' => Direction::S,
-                        '<' => Direction::W,
-                        _ => continue,
-                    },
-                };
-            }
-        }
-        panic!("Guard position not found.")
-    }
-
-    fn step(self: &Self, map: &impl Mappy) -> Result<Self, ErrOutOfBounds> {
-        let pos = match self.dir {
-            Direction::N => (self.pos.0.checked_sub(1).ok_or(ErrOutOfBounds)?, self.pos.1),
-            Direction::S => (self.pos.0 + 1, self.pos.1),
-            Direction::E => (self.pos.0, self.pos.1 + 1),
-            Direction::W => (self.pos.0, self.pos.1.checked_sub(1).ok_or(ErrOutOfBounds)?),
-        };
-        if !map.in_bounds(pos.0, pos.1) {
-            return Err(ErrOutOfBounds);
-        }
-        Ok(if map.blocked(pos.0, pos.1) {
-            Self {
-                pos: self.pos,
-                dir: match self.dir {
-                    Direction::N => Direction::E,
-                    Direction::S => Direction::W,
-                    Direction::E => Direction::S,
-                    Direction::W => Direction::N,
-                },
-            }
-        } else {
-            Self { pos, dir: self.dir }
+    fn try_from(value: char) -> Result<Self, Self::Error> {
+        Ok(match value {
+            '.' => Cell::Empty,
+            '#' => Cell::Wall,
+            _ => Self::Guard(value.try_into().map_err(|_| ParseCellError)?),
         })
     }
 }
 
+#[derive(FromStr, Deref, DerefMut, Clone)]
+struct Map(Grid<Cell>);
+
+#[derive(Hash, PartialEq, Eq, Clone)]
+struct GuardState {
+    pos: Position,
+    dir: Direction,
+}
+
+impl GuardState {
+    fn new(map: &Map) -> GuardState {
+        map.iter::<Position>()
+            .find_map(|(pos, cell)| {
+                if let Cell::Guard(dir) = cell {
+                    Some(GuardState { pos, dir })
+                } else {
+                    None
+                }
+            })
+            .unwrap()
+    }
+    fn step(&mut self, mut command: impl FnMut(&GuardState) -> Command) -> bool {
+        match command(&self) {
+            Command::Forward => self.pos += self.dir,
+            Command::Right => self.dir = self.dir.rotr(),
+            Command::Halt => return false,
+        };
+        true
+    }
+    fn march(&mut self, mut command: impl FnMut(&GuardState) -> Command) -> MarchResult {
+        let mut previous_states: HashSet<GuardState> = HashSet::new();
+        loop {
+            if previous_states.contains(&self) {
+                return MarchResult::Loop;
+            }
+            previous_states.insert(self.clone());
+            if !self.step(&mut command) {
+                return MarchResult::Halt;
+            }
+        }
+    }
+}
+
+#[derive(PartialEq, Eq, Debug)]
 enum MarchResult {
-    OutOfBounds,
+    Halt,
     Loop,
 }
 
-fn march(mut state: GuardState, mappy: &impl Mappy) -> (MarchResult, HashSet<(usize, usize)>) {
-    let mut visited: HashSet<(usize, usize)> = HashSet::new();
-    let mut previous_states: HashSet<GuardState> = HashSet::new();
-    loop {
-        if previous_states.contains(&state) {
-            return (MarchResult::Loop, visited);
+enum Command {
+    Forward,
+    Right,
+    Halt,
+}
+
+fn guard_algorithm(map: &Map) -> impl Fn(&GuardState) -> Command {
+    |state| {
+        if !map.is_in_bounds(state.pos + state.dir) {
+            return Command::Halt;
         }
-        previous_states.insert(state.clone());
-        visited.insert(state.pos);
-        state = match state.step(mappy) {
-            Ok(newstate) => newstate,
-            Err(ErrOutOfBounds) => return (MarchResult::OutOfBounds, visited),
+        if map[state.pos + state.dir] == Cell::Wall {
+            return Command::Right;
         }
+        return Command::Forward;
     }
 }
 
 fn part1(input: &str) -> usize {
-    let map = parse(input);
-    let state = GuardState::new(&map);
-    let (_, visited) = march(state, &map);
+    let map = input.parse().expect("Parse failed.");
+    let mut visited = HashSet::<Position>::new();
+    let mut state = GuardState::new(&map);
+    let algorithm = guard_algorithm(&map);
+    state.march(|state| {
+        visited.insert(state.pos);
+        algorithm(state)
+    });
     visited.len()
 }
 
-struct MapWithObstruction<'a> {
-    map: &'a Map,
-    obstruction: (usize, usize),
-}
-
-impl Mappy for MapWithObstruction<'_> {
-    fn in_bounds(&self, row: usize, col: usize) -> bool {
-        self.map.in_bounds(row, col)
-    }
-
-    fn blocked(&self, row: usize, col: usize) -> bool {
-        self.obstruction == (row, col) || self.map.blocked(row, col)
-    }
-}
-
 fn part2(input: &str) -> usize {
-    let map = parse(input);
-    let state = GuardState::new(&map);
-    let (_, visited) = march(state.clone(), &map);
+    let map = input.parse().expect("Parse failed.");
+    let mut ghost = GuardState::new(&map);
+    let start = ghost.pos;
+    let algorithm = guard_algorithm(&map);
     let mut count = 0usize;
-    for obstruction in visited {
-        if obstruction == state.pos {
-            continue;
+    ghost.march(|state| {
+        let mut next_state = state.clone();
+        if next_state.step(&algorithm) && next_state.pos != start {
+            let obstacle = next_state.pos;
+            let mut state = state.clone();
+            if state.march(|state| {
+                if state.pos + state.dir == obstacle {
+                    Command::Right
+                } else {
+                    algorithm(&state)
+                }
+            }) == MarchResult::Loop
+            {
+                count += 1;
+            }
         }
-        if let (MarchResult::Loop, _) = march(
-            state.clone(),
-            &MapWithObstruction {
-                map: &map,
-                obstruction,
-            },
-        ) {
-            count += 1;
-        }
-    }
+        algorithm(state)
+    });
     count
 }
 

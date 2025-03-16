@@ -8,4 +8,4 @@ name = "y2024d10"
 path = "src/10.rs"
 
 [dependencies]
-point = { version = "0.1.0", path = "../../point" }
+point.workspace = true

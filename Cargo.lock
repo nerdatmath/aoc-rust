@@ -12,12 +12,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "array2d"
-version = "0.3.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d8b39cb2c1bf5a7c0dd097aa95ab859cf87dab5a4328900f5388942dc1889f74"
-
-[[package]]
 name = "autocfg"
 version = "1.4.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -63,6 +57,14 @@ dependencies = [
  "proc-macro2",
  "quote",
  "syn 2.0.100",
+]
+
+[[package]]
+name = "direction"
+version = "0.1.0"
+dependencies = [
+ "derive_more",
+ "parse-display",
 ]
 
 [[package]]
@@ -307,6 +309,15 @@ name = "point"
 version = "0.1.0"
 
 [[package]]
+name = "position"
+version = "0.1.0"
+dependencies = [
+ "direction 0.1.0",
+ "game-grid",
+ "parse-display",
+]
+
+[[package]]
 name = "proc-macro-error"
 version = "1.0.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -505,7 +516,10 @@ dependencies = [
 name = "y2024d06"
 version = "0.1.0"
 dependencies = [
- "array2d",
+ "derive_more",
+ "direction 0.1.0",
+ "game-grid",
+ "position",
 ]
 
 [[package]]
@@ -547,7 +561,7 @@ name = "y2024d12"
 version = "0.1.0"
 dependencies = [
  "derive_more",
- "direction",
+ "direction 0.18.1",
  "disjoint-hash-set",
  "grid",
  "itertools",
@@ -579,16 +593,20 @@ name = "y2024d15"
 version = "0.1.0"
 dependencies = [
  "derive_more",
+ "direction 0.1.0",
  "game-grid",
  "parse-display",
  "parse-display-with",
+ "position",
 ]
 
 [[package]]
 name = "y2024d16"
 version = "0.1.0"
 dependencies = [
+ "direction 0.1.0",
  "game-grid",
  "parse-display",
  "pathfinding",
+ "position",
 ]
