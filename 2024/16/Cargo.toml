@@ -1,0 +1,9 @@
+[package]
+name = "y2024d16"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+game-grid.workspace = true
+parse-display.workspace = true
+pathfinding = "4.14.0"
