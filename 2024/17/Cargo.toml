@@ -1,0 +1,14 @@
+[package]
+name = "y2024d17"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+num-traits = "0.2.19"
+numtraits = "0.0.1"
+parse-display.workspace = true
+parse-display-with.workspace = true
+bytecode = { path = "bytecode" }
+bytecode-derive = { path = "bytecode-derive" }
+sif = "0.1.0"
+derive_more = { workspace = true, features = ["deref"] }
