@@ -10,14 +10,13 @@ pub fn run(input: &str, size: usize) -> Position {
     for &Position { x, y } in &puzzle.positions {
         grid.remove_vertex((x, y));
         if path.contains(&(x, y)) {
-            if let Some(new_path) = find_path(&grid, (0, 0), (size, size)) {
-                path = new_path;
-            } else {
-                return Position { x, y };
+            match find_path(&grid, (0, 0), (size, size)) {
+                Some(new_path) => path = new_path,
+                None => return Position { x, y },
             }
         }
     }
-    panic!("we still have a path after all the bytes fell")
+    panic!("nothing blocked our path")
 }
 
 #[cfg(test)]

@@ -9,11 +9,10 @@ pub fn run(input: &str, size: usize, count: usize) -> usize {
     for &Position { x, y } in &puzzle.positions[..count] {
         grid.remove_vertex((x, y));
     }
-    if let Some(path) = find_path(&grid, (0, 0), (size, size)) {
-        path.len() - 1
-    } else {
-        panic!("no path")
-    }
+    find_path(&grid, (0, 0), (size, size))
+        .expect("no path")
+        .len()
+        - 1
 }
 
 #[cfg(test)]
