@@ -7,4 +7,3 @@ edition = "2024"
 parse-display.workspace = true
 parse-display-with.workspace = true
 pathfinding.workspace = true
-regex = "1.11.1"

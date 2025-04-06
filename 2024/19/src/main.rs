@@ -1,5 +1,6 @@
 mod part1;
 mod part2;
+mod paths;
 mod puzzle;
 
 fn main() {

@@ -787,5 +787,4 @@ dependencies = [
  "parse-display",
  "parse-display-with",
  "pathfinding",
- "regex",
 ]
