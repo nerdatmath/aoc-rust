@@ -22,7 +22,7 @@ enum Cell {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Display)]
-#[display("{pos}{dir}")]
+#[display("({pos.x},{pos.y}){dir}")]
 struct Node {
     pos: Position,
     dir: Direction,

@@ -125,7 +125,6 @@ name = "direction"
 version = "0.1.0"
 dependencies = [
  "derive_more",
- "game-grid",
  "parse-display",
 ]
 
@@ -400,7 +399,6 @@ version = "0.1.0"
 dependencies = [
  "direction 0.1.0",
  "game-grid",
- "parse-display",
 ]
 
 [[package]]

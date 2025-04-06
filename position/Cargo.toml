@@ -5,5 +5,4 @@ edition = "2024"
 
 [dependencies]
 game-grid.workspace = true
-parse-display.workspace = true
 direction.workspace = true
