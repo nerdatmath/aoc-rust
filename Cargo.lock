@@ -125,6 +125,7 @@ name = "direction"
 version = "0.1.0"
 dependencies = [
  "derive_more",
+ "game-grid",
  "parse-display",
 ]
 
@@ -770,4 +771,13 @@ dependencies = [
  "parse-display",
  "parse-display-with",
  "sif",
+]
+
+[[package]]
+name = "y2024d18"
+version = "0.1.0"
+dependencies = [
+ "parse-display",
+ "parse-display-with",
+ "pathfinding",
 ]

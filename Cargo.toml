@@ -22,7 +22,8 @@ members = [
     "position",
     "2024/17",
     "2024/17/bytecode",
-    "2024/17/bytecode-derive"
+    "2024/17/bytecode-derive",
+    "2024/18"
 ]
 resolver = "2"
 
@@ -37,3 +38,4 @@ parse-display-with = "0"
 direction = { version = "0.1.0", path = "direction" }
 point = { version = "0.1.0", path = "point" }
 position = { version = "0.1.0", path = "position" }
+pathfinding = "4.14.0"
