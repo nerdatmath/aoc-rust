@@ -1,0 +1,9 @@
+[package]
+name = "y2024d20"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+itertools.workspace = true
+pathfinding.workspace = true
+sif = "0.1.0"

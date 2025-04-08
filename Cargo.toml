@@ -11,20 +11,22 @@ members = [
     "2024/09",
     "2024/10",
     "2024/11",
-    "bag",
     "2024/12",
-    "point",
     "2024/13",
     "2024/14",
     "2024/15",
     "2024/16",
-    "direction",
-    "position",
     "2024/17",
-    "2024/17/bytecode",
     "2024/17/bytecode-derive",
-    "2024/18"
-, "2024/19"]
+    "2024/17/bytecode",
+    "2024/18",
+    "2024/19",
+    "2024/20",
+    "bag",
+    "direction",
+    "point",
+    "position",
+]
 resolver = "2"
 
 [workspace.dependencies]
@@ -35,7 +37,9 @@ nom = "8"
 num = "0"
 parse-display = "0"
 parse-display-with = "0"
+pathfinding = "4"
+
+bag = { version = "0.1.0", path = "bag" }
 direction = { version = "0.1.0", path = "direction" }
 point = { version = "0.1.0", path = "point" }
 position = { version = "0.1.0", path = "position" }
-pathfinding = "4.14.0"
