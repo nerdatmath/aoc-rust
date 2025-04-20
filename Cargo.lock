@@ -828,3 +828,12 @@ dependencies = [
  "parse-display-with",
  "pathfinding",
 ]
+
+[[package]]
+name = "y2024d22"
+version = "0.1.0"
+dependencies = [
+ "itertools",
+ "parse-display",
+ "parse-display-with",
+]
