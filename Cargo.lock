@@ -837,3 +837,11 @@ dependencies = [
  "parse-display",
  "parse-display-with",
 ]
+
+[[package]]
+name = "y2024d23"
+version = "0.1.0"
+dependencies = [
+ "itertools",
+ "pathfinding",
+]
