@@ -1,0 +1,10 @@
+[package]
+name = "y2024d24"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+ascii = "1.1.0"
+itertools.workspace = true
+parse-display.workspace = true
+parse-display-with.workspace = true

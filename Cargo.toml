@@ -1,5 +1,11 @@
 [workspace]
+resolver = "2"
+
 members = [
+    "bag",
+    "direction",
+    "point",
+    "position",
     "2024/01",
     "2024/02",
     "2024/03",
@@ -22,12 +28,11 @@ members = [
     "2024/18",
     "2024/19",
     "2024/20",
-    "bag",
-    "direction",
-    "point",
-    "position", "2024/21", "2024/22", "2024/23",
+    "2024/21",
+    "2024/22",
+    "2024/23",
+    "2024/24",
 ]
-resolver = "2"
 
 [workspace.dependencies]
 derive_more = "2"
@@ -38,7 +43,6 @@ num = "0"
 parse-display = "0"
 parse-display-with = "0"
 pathfinding = "4"
-
 bag = { version = "0.1.0", path = "bag" }
 direction = { version = "0.1.0", path = "direction" }
 point = { version = "0.1.0", path = "point" }
