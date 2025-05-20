@@ -861,3 +861,7 @@ dependencies = [
  "parse-display",
  "parse-display-with",
 ]
+
+[[package]]
+name = "y2024d25"
+version = "0.1.0"
