@@ -829,7 +829,6 @@ name = "y2024d21"
 version = "0.1.0"
 dependencies = [
  "enum-iterator",
- "itertools",
  "parse-display",
  "parse-display-with",
  "pathfinding",

@@ -30,6 +30,7 @@ impl From<Direction> for Key {
 
 impl Keypad for DirectionalKeypad {
     type Key = Key;
+    const ACTIVATE: Self::Key = Key::A;
 
     fn pos(&self, key: Self::Key) -> (usize, usize) {
         use Direction::*;

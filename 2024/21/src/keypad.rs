@@ -5,6 +5,7 @@ use std::hash::Hash;
 
 pub trait Keypad: Clone + Copy + Eq + Hash + Debug + Default {
     type Key: Copy + Clone + Default + PartialEq + Eq + Hash + Display + Debug + Sequence;
+    const ACTIVATE: Self::Key;
 
     fn pos(&self, key: Self::Key) -> (usize, usize);
     fn at(&self, pos: (usize, usize)) -> Option<Self::Key>;

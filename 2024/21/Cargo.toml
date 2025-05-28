@@ -5,7 +5,7 @@ edition = "2024"
 
 [dependencies]
 enum-iterator = "2.1.0"
-itertools.workspace = true
+# itertools.workspace = true
 parse-display.workspace = true
 parse-display-with.workspace = true
 pathfinding.workspace = true

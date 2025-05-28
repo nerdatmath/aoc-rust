@@ -19,6 +19,7 @@ pub struct NumericKeypad;
 
 impl Keypad for NumericKeypad {
     type Key = Key;
+    const ACTIVATE: Self::Key = Key::A;
 
     fn pos(&self, key: Self::Key) -> (usize, usize) {
         use Key::*;

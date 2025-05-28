@@ -1,6 +1,5 @@
 use crate::directional_keypad::{self, DirectionalKeypad};
 use crate::keypad::Keypad;
-use itertools::Itertools as _;
 use pathfinding::prelude::dijkstra;
 use std::collections::HashMap;
 use std::hash::Hash;
@@ -17,8 +16,10 @@ impl<KP: Keypad> PrecomputedCosts<KP> {
     pub fn new(keypad: &KP, costs: &dyn Costs<KP>) -> Self {
         PrecomputedCosts(
             enum_iterator::all::<KP::Key>()
-                .cartesian_product(enum_iterator::all::<KP::Key>())
-                .map(|(source, target)| ((source, target), costs.cost(keypad, source, target)))
+                .flat_map(|source| {
+                    enum_iterator::all::<KP::Key>()
+                        .map(move |target| ((source, target), costs.cost(keypad, source, target)))
+                })
                 .collect(),
         )
     }
@@ -46,7 +47,7 @@ impl<KP: Keypad> Costs<KP> for Human {
 
 #[derive(Debug, Clone, Copy)]
 pub struct Robot<C: Costs<DirectionalKeypad>> {
-    parent: C,
+    operator: C,
 }
 
 #[derive(Debug, PartialEq, Eq, Hash, Clone, Copy)]
@@ -56,8 +57,8 @@ struct State<Key> {
 }
 
 impl<C: Costs<DirectionalKeypad>> Robot<C> {
-    pub fn new(parent: C) -> Self {
-        Self { parent }
+    pub fn new(operator: C) -> Self {
+        Self { operator }
     }
 
     // Next states and the costs to get there.
@@ -84,7 +85,7 @@ impl<C: Costs<DirectionalKeypad>> Robot<C> {
                     parent_key: new_parent_key,
                     key,
                 },
-                self.parent
+                self.operator
                     .cost(&DirectionalKeypad, parent_key, new_parent_key),
             ));
         }
@@ -103,11 +104,11 @@ impl<KP: Keypad, C: Costs<DirectionalKeypad>> Costs<KP> for Robot<C> {
         // Find the cost of the shortest path to the state where the
         // robot is hovering over `target`.
         let start: State<<KP as Keypad>::Key> = State {
-            parent_key: directional_keypad::Key::A,
+            parent_key: DirectionalKeypad::ACTIVATE,
             key: source,
         };
         let target: State<<KP as Keypad>::Key> = State {
-            parent_key: directional_keypad::Key::A,
+            parent_key: DirectionalKeypad::ACTIVATE,
             key: target,
         };
         let (_, cost) = dijkstra(
