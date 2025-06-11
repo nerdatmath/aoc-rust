@@ -650,6 +650,13 @@ dependencies = [
 ]
 
 [[package]]
+name = "y2023d01"
+version = "0.1.0"
+dependencies = [
+ "regex",
+]
+
+[[package]]
 name = "y2024d01"
 version = "0.1.0"
 dependencies = [
