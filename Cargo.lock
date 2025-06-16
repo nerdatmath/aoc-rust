@@ -699,6 +699,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "y2023d05"
+version = "0.1.0"
+dependencies = [
+ "parse-display",
+ "parse-display-with",
+]
+
+[[package]]
 name = "y2024d01"
 version = "0.1.0"
 dependencies = [
