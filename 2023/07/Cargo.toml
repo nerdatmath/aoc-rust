@@ -1,0 +1,9 @@
+[package]
+name = "y2023d07"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+bag.workspace = true
+lazy-regex = "3.4.1"
+parse-display.workspace = true
