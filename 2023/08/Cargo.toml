@@ -1,0 +1,10 @@
+[package]
+name = "y2023d08"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+elsa = "1.11.2"
+lazy-regex = "3.4.1"
+num-integer = "0.1.46"
+typed-arena = "2.0.2"
