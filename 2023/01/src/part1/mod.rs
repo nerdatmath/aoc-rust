@@ -3,7 +3,7 @@ use crate::puzzle::Puzzle;
 #[derive(Debug)]
 struct NoDigitError<'a>(#[allow(dead_code)]&'a str);
 
-fn first_digit(s: &str) -> Result<u64, NoDigitError> {
+fn first_digit(s: &'_ str) -> Result<u64, NoDigitError<'_>> {
     for ch in s.chars() {
         match ch {
             '0'..='9' => return Ok(u64::from(ch) - u64::from('0')),
@@ -13,7 +13,7 @@ fn first_digit(s: &str) -> Result<u64, NoDigitError> {
     Err(NoDigitError(s))
 }
 
-fn last_digit(s: &str) -> Result<u64, NoDigitError> {
+fn last_digit(s: &'_ str) -> Result<u64, NoDigitError<'_>> {
     for ch in s.chars().rev() {
         match ch {
             '0'..='9' => return Ok(u64::from(ch) - u64::from('0')),
@@ -23,7 +23,7 @@ fn last_digit(s: &str) -> Result<u64, NoDigitError> {
     Err(NoDigitError(s))
 }
 
-fn calibration_value(s: &str) -> Result<u64, NoDigitError> {
+fn calibration_value(s: &'_ str) -> Result<u64, NoDigitError<'_>> {
     Ok(first_digit(s)? * 10 + last_digit(s)?)
 }
 

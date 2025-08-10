@@ -7,7 +7,7 @@ struct NoDigitError<'a>(#[allow(dead_code)] &'a str);
 
 const DIGITS: &str = r"([0-9]|one|two|three|four|five|six|seven|eight|nine)";
 
-fn from_digit(s: &str) -> Result<u64, NoDigitError> {
+fn from_digit(s: &'_ str) -> Result<u64, NoDigitError<'_>> {
     Ok(match s {
         "0" => 0,
         "1" | "one" => 1,
@@ -23,7 +23,7 @@ fn from_digit(s: &str) -> Result<u64, NoDigitError> {
     })
 }
 
-fn first_digit(s: &str) -> Result<u64, NoDigitError> {
+fn first_digit(s: &'_ str) -> Result<u64, NoDigitError<'_>> {
     static RE: LazyLock<Regex> =
         LazyLock::new(|| Regex::new(&[r"^.*?", DIGITS, r".*$"].join("")).unwrap());
     let captures = RE.captures(s).ok_or(NoDigitError(s))?;
@@ -31,7 +31,7 @@ fn first_digit(s: &str) -> Result<u64, NoDigitError> {
     from_digit(m.as_str())
 }
 
-fn last_digit(s: &str) -> Result<u64, NoDigitError> {
+fn last_digit(s: &'_ str) -> Result<u64, NoDigitError<'_>> {
     static RE: LazyLock<Regex> =
         LazyLock::new(|| Regex::new(&[r"^.*", DIGITS, r".*?$"].join("")).unwrap());
     let captures = RE.captures(s).ok_or(NoDigitError(s))?;
@@ -39,7 +39,7 @@ fn last_digit(s: &str) -> Result<u64, NoDigitError> {
     from_digit(m.as_str())
 }
 
-fn calibration_value(s: &str) -> Result<u64, NoDigitError> {
+fn calibration_value(s: &'_ str) -> Result<u64, NoDigitError<'_>> {
     Ok(first_digit(s)? * 10 + last_digit(s)?)
 }
 

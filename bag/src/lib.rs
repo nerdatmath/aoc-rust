@@ -28,7 +28,7 @@ impl<T: Eq + Hash> Bag<T> {
         self.0.values().sum()
     }
 
-    pub fn iter(&self) -> Iter<T> {
+    pub fn iter(&'_ self) -> Iter<'_, T> {
         self.0.iter()
     }
 }
