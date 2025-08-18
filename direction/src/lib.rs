@@ -1,7 +1,8 @@
 use derive_more::{FromStr, TryFrom};
+use enum_iterator::Sequence;
 use parse_display::Display;
 
-#[derive(Clone, Copy, Debug, Display, PartialEq, Eq, TryFrom, FromStr, Hash)]
+#[derive(Clone, Copy, Debug, Display, PartialEq, Eq, TryFrom, FromStr, Hash, Sequence)]
 #[try_from(repr)]
 #[repr(u8)]
 pub enum Direction {
