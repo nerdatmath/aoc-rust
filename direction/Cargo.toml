@@ -5,4 +5,5 @@ edition = "2024"
 
 [dependencies]
 derive_more = { workspace = true, features = ["try_from", "from_str"] }
+enum-iterator.workspace = true
 parse-display.workspace = true
