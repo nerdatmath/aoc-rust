@@ -878,10 +878,8 @@ dependencies = [
 name = "y2024d11"
 version = "0.1.0"
 dependencies = [
- "bag",
- "derive_more",
- "parse-display",
- "parse-display-with",
+ "anyhow",
+ "itertools",
 ]
 
 [[package]]
