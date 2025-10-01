@@ -45,12 +45,12 @@ fn find_starting_direction(grid: &Grid, starting_position: Position) -> Option<D
     use Pipe::*;
     Some(match patch_pipe(grid, starting_position)? {
         Ground => unreachable!(),
-        NorthSouth => N,
+        NorthSouth => S,
         EastWest => E,
         NorthEast => N,
-        NorthWest => N,
+        NorthWest => W,
         SouthWest => S,
-        SouthEast => S,
+        SouthEast => E,
         Start => unreachable!(),
     })
 }
