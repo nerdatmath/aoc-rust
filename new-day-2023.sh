@@ -12,6 +12,6 @@ if [[ -a $dir ]]; then
     exit 1
 fi
 
-jj new -m "${message}" || exit
+jj new -m "${message}" trunk || exit
 cp -r template "${dir}" || exit
 cargo init --name "${name}" "${dir}"

@@ -798,14 +798,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "y2023d11"
-version = "0.1.0"
-dependencies = [
- "anyhow",
- "itertools",
-]
-
-[[package]]
 name = "y2024d01"
 version = "0.1.0"
 dependencies = [
