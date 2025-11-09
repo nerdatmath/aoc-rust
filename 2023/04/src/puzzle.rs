@@ -29,7 +29,7 @@ impl Card {
 }
 
 #[derive(Clone, Copy, Debug, Display, FromStr, PartialEq, Eq, Hash)]
-pub struct Number(#[from_str(regex = r"\s*(?<>[0-9]+)")] u8);
+pub struct Number(#[from_str(regex = r"\s*(?<>[0-9]+)")] #[display("{:>2}")] u8);
 
 fn from_str_delimited_by_ascii_whitespace<V, T>(s: &str) -> Result<V, ParseError>
 where
