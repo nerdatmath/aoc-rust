@@ -1,0 +1,9 @@
+[package]
+name = "y2023d13"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+bitvec = "1.0.1"
+game-grid.workspace = true
+position.workspace = true
