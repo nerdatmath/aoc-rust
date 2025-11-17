@@ -1,0 +1,8 @@
+[package]
+name = "y2023d14"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+game-grid.workspace = true
+position.workspace = true
