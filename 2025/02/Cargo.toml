@@ -1,0 +1,10 @@
+[package]
+name = "y2025d02"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+quickcheck = "1"
+quickcheck_macros = "1"
+generic-tests = "0"
+lazy-regex = "3"

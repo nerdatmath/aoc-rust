@@ -18,6 +18,7 @@ pub fn run(input: &str) -> usize {
     }
     count
 }
+
 #[cfg(test)]
 mod test {
     use super::*;
