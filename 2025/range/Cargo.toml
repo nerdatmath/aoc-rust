@@ -1,12 +1,9 @@
 [package]
-name = "y2025d02"
+name = "range"
 version = "0.1.0"
 edition = "2024"
 
 [dependencies]
-quickcheck = "1"
-quickcheck_macros = "1"
-generic-tests = "0"
-range.path = "../range"
+lazy-regex.workspace = true
 parse-display.workspace = true
 parse-display-with.workspace = true

@@ -1,5 +1,5 @@
 [workspace]
-resolver = "2"
+resolver = "3"
 
 members = [
     "bag",
@@ -18,13 +18,14 @@ derive_more = "2"
 enum-iterator = "2"
 game-grid = "0"
 itertools = "0"
+lazy-regex = "3"
 nom = "8"
 num = "0"
 parse-display = "0"
 parse-display-with = "0"
 pathfinding = "4"
 regex = "1"
-bag = { version = "0.1.0", path = "bag" }
-direction = { version = "0.1.0", path = "direction" }
-point = { version = "0.1.0", path = "point" }
-position = { version = "0.1.0", path = "position" }
+bag.path = "bag"
+direction.path = "direction"
+point.path = "point"
+position.path = "position"

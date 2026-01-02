@@ -1,32 +1,9 @@
-use lazy_regex::regex_captures;
+use parse_display::FromStr;
+use parse_display_with::formats::join;
 
-type Range = std::ops::RangeInclusive<u64>;
-
-#[derive(Debug)]
+#[derive(Debug, FromStr)]
+#[display("{ranges}")]
 pub struct Puzzle {
-    pub ranges: Vec<Range>,
-}
-
-#[derive(Debug)]
-pub struct ParseError();
-
-impl From<std::num::ParseIntError> for ParseError {
-    fn from(_value: std::num::ParseIntError) -> Self {
-        Self()
-    }
-}
-
-fn parse_range(s: &str) -> Result<Range, ParseError> {
-    let (_, start, end) = regex_captures!(r#"(\d+)-(\d+)"#, s).ok_or(ParseError())?;
-    Ok((start.parse()?)..=(end.parse()?))
-}
-
-impl std::str::FromStr for Puzzle {
-    type Err = ParseError;
-
-    fn from_str(s: &str) -> Result<Self, Self::Err> {
-        Ok(Puzzle {
-            ranges: s.split(',').map(parse_range).collect::<Result<_, _>>()?,
-        })
-    }
+    #[display(with=join(range::RangeFormat, ","))]
+    pub ranges: Box<[range::Range]>,
 }

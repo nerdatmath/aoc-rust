@@ -1,12 +1,8 @@
 [package]
-name = "y2025d02"
+name = "y2025d05"
 version = "0.1.0"
 edition = "2024"
 
 [dependencies]
-quickcheck = "1"
-quickcheck_macros = "1"
-generic-tests = "0"
-range.path = "../range"
 parse-display.workspace = true
 parse-display-with.workspace = true

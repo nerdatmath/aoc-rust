@@ -711,6 +711,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "range"
+version = "0.1.0"
+dependencies = [
+ "lazy-regex",
+ "parse-display",
+ "parse-display-with",
+]
+
+[[package]]
 name = "regex"
 version = "1.11.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1238,9 +1247,11 @@ name = "y2025d02"
 version = "0.1.0"
 dependencies = [
  "generic-tests",
- "lazy-regex",
+ "parse-display",
+ "parse-display-with",
  "quickcheck",
  "quickcheck_macros",
+ "range",
 ]
 
 [[package]]
@@ -1254,4 +1265,12 @@ dependencies = [
  "game-grid",
  "parse-display",
  "position",
+]
+
+[[package]]
+name = "y2025d05"
+version = "0.1.0"
+dependencies = [
+ "parse-display",
+ "parse-display-with",
 ]
