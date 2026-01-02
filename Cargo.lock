@@ -1246,3 +1246,12 @@ dependencies = [
 [[package]]
 name = "y2025d03"
 version = "0.1.0"
+
+[[package]]
+name = "y2025d04"
+version = "0.1.0"
+dependencies = [
+ "game-grid",
+ "parse-display",
+ "position",
+]
