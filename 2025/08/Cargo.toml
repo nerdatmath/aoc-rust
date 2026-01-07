@@ -1,0 +1,9 @@
+[package]
+name = "y2025d08"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+parse-display.workspace = true
+parse-display-with.workspace = true
+pathfinding.workspace = true
